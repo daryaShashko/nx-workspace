@@ -1,0 +1,34 @@
+{
+  "root": "packages/newflix-e2e",
+  "sourceRoot": "packages/newflix-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "packages/newflix-e2e/cypress.json",
+        "devServerTarget": "newflix:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "newflix:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "packages/newflix-e2e/**/*.{js,ts}"
+        ]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": [
+    "newflix"
+  ]
+}

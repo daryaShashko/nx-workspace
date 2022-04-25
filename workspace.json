@@ -1,4 +1,7 @@
 {
   "version": 2,
-  "projects": {}
+  "projects": {
+    "newflix": "packages/newflix",
+    "newflix-e2e": "packages/newflix-e2e"
+  }
 }
