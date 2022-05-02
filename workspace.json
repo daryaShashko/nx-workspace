@@ -2,6 +2,7 @@
   "version": 2,
   "projects": {
     "newflix": "packages/newflix",
+    "newflix-backend": "packages/newflix-backend",
     "newflix-e2e": "packages/newflix-e2e"
   }
 }
