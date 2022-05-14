@@ -1,3 +1,8 @@
 {
-  "singleQuote": true
+    "bracketSameLine": true,
+    "bracketSpacing": true,
+    "arrowParens": "always",
+    "semi": true,
+    "trailingComma": "none",
+    "singleQuote": true
 }
