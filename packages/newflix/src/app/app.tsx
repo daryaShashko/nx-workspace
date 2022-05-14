@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { Button, SearchBar, Logo, FilmItem } from './components';
+import { Button, SearchBar, Logo, FilmItem, FilmDescription } from './components';
 import AddIcon from '@mui/icons-material/Add';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -39,6 +39,17 @@ export function App() {
         <StyledApp>
             <Container>
                 <Header>
+                    <FilmDescription
+                        id={'123'}
+                        genre={'films'}
+                        date={new Date()}
+                        title={'Title'}
+                        duration={120}
+                        rate={4}
+                        description={
+                            'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsum, magni maiores numquam provident quia temporibus!'
+                        }
+                    />
                     <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
                         <Logo />
                         <Button startIcon={<AddIcon />}>Add Film</Button>
