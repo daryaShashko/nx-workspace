@@ -26,7 +26,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { grey } from '@mui/material/colors';
 
-export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date }) => {
+export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onClick }) => {
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -41,7 +41,7 @@ export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date }) =
     const id = open ? 'simple-popover' : undefined;
 
     return (
-        <Card sx={{ position: 'relative' }}>
+        <Card sx={{ position: 'relative' }} onClick={onClick}>
             <IconButton
                 aria-label="settings"
                 aria-describedby={id}

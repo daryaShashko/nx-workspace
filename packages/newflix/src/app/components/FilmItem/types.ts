@@ -3,4 +3,5 @@ export type FilmItemProps = {
     title: string;
     genre: string;
     date: Date;
+    onClick: () => void;
 };
