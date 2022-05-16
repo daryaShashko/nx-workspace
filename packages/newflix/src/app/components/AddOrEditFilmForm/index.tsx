@@ -1,0 +1,1 @@
+export { AddOrEditFilmForm } from './AddOrEditFilmForm';

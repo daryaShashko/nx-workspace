@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { Button, SearchBar, Logo, FilmItem, FilmDescription } from './components';
+import { Button, SearchBar, Logo, FilmItem, FilmDescription, AddOrEditFilmForm } from './components';
 import AddIcon from '@mui/icons-material/Add';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -11,9 +11,10 @@ import NxWelcome from './nx-welcome';
 
 import { Route, Link, useHistory, Switch } from 'react-router-dom';
 import { useState } from 'react';
+import { FormData } from './components/AddOrEditFilmForm/types';
 
 const Header = styled.header`
-    padding: 40px 0;
+    padding: 0 0 80px 0;
 
     > div + div {
         margin-top: 40px;
@@ -29,6 +30,14 @@ export function App() {
             target: { value }
         } = event;
         setSearchBarValue(value);
+    };
+
+    const onSaveFilm = (data: Partial<FormData>) => {
+        console.log(data);
+    };
+
+    const onCancel = (data: Partial<FormData>) => {
+        console.log(data);
     };
 
     const handleOnSearch = () => console.log('should search by searchBarValue', searchBarValue);
@@ -64,6 +73,13 @@ export function App() {
                         }
                     }) => (
                         <Header>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
+                                <Logo />
+                                <Button startIcon={<AddIcon />} onClick={() => history.push('/')}>
+                                    Find Film
+                                </Button>
+                            </Stack>
+
                             <FilmDescription
                                 id={id}
                                 genre={`films_${id}`}
@@ -80,7 +96,9 @@ export function App() {
                 />
             </Switch>
 
-            <Grid container spacing={2}>
+            <AddOrEditFilmForm onCancel={onCancel} onSave={onSaveFilm} />
+
+            <Grid container spacing={8}>
                 {Array.from({ length: 10 }).map((number, index) => (
                     <Grid item xs={4} key={index}>
                         <FilmItem
@@ -92,21 +110,6 @@ export function App() {
                     </Grid>
                 ))}
             </Grid>
-
-            {/* START: routes */}
-            {/* These routes and navigation have been generated for you */}
-            {/* Feel free to move and update them to fit your needs */}
-            {/*<br/>*/}
-            {/*<hr/>*/}
-            {/*<br/>*/}
-            {/*<div role="navigation">*/}
-            {/*  <ul>*/}
-            {/*    <li><Link to="/">Home</Link></li>*/}
-            {/*    <li><Link to="/page-2">Page 2</Link></li>*/}
-            {/*  </ul>*/}
-            {/*</div>*/}
-
-            {/*/!* END: routes *!/*/}
         </Container>
     );
 }
