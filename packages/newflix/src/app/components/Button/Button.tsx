@@ -8,9 +8,10 @@ export const Button: React.FunctionComponent<BaseLayoutProps & ButtonProps> = ({
     size,
     type,
     startIcon,
-    onClick
+    onClick,
+    variant
 }) => (
-    <MUIButton variant="contained" size={size} onClick={onClick} type={type} startIcon={startIcon}>
+    <MUIButton variant={variant || 'contained'} size={size} onClick={onClick} type={type} startIcon={startIcon}>
         {children}
     </MUIButton>
 );

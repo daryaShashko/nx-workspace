@@ -6,6 +6,10 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 
 import NxWelcome from './nx-welcome';
 
@@ -51,7 +55,7 @@ export function App() {
                         <Header>
                             <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
                                 <Logo />
-                                <Button startIcon={<AddIcon />}>Add Film</Button>
+                                <AddOrEditFilmForm onCancel={onCancel} onSave={onSaveFilm} />
                             </Stack>
 
                             <Stack spacing={2}>
@@ -95,8 +99,6 @@ export function App() {
                     )}
                 />
             </Switch>
-
-            <AddOrEditFilmForm onCancel={onCancel} onSave={onSaveFilm} />
 
             <Grid container spacing={8}>
                 {Array.from({ length: 10 }).map((number, index) => (
