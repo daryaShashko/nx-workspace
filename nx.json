@@ -37,7 +37,7 @@
     }
   },
   "implicitDependencies": {
-    "buildSpecs/store-source-artifacts.yml": "*",
+    "buildSpecs/store-source-artifact.yml": "*",
     "nx.json": "*",
     "buildSpecs/quality.yaml": ["newflix"],
     "buildSpecs/release.yaml": ["newflix"]
