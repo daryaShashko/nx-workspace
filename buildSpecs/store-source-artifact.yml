@@ -19,7 +19,7 @@ phases:
       - npm install --no-progress
       - SOURCE_BRANCH=$(echo $CODEBUILD_WEBHOOK_TRIGGER | awk '{split($0, a,"/"); print a[2]}')
       # Detect affected libs
-      - npx nx affected:packages --base=${TARGET_BRANCH}~1 --head=${TARGET_BRANCH}
+      - npx nx affected:libs --base=${TARGET_BRANCH}~1 --head=${TARGET_BRANCH}
       # Detect affected apps
       - AFFECTED_APPS=$(nx affected:apps --base=${TARGET_BRANCH}~1 --head=${TARGET_BRANCH} | tail -n +3 | awk '{print $NF}')
       - echo ${AFFECTED_APPS}
