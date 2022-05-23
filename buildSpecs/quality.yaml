@@ -1,0 +1,54 @@
+version: 0.2
+
+env:
+  variables:
+    PROJECT_NAME: ""
+    PROJECT_CONFIGURATION: "production"
+    # SonarQube-related variables:
+    SONAR_PROJECT_KEY: ""
+    SONAR_PROJECT_NAME: ""
+    STRICT_SONAR_SCAN: ""
+    SONAR_LOGIN: ""
+    SONAR_HOST: ""
+    # Pre-set values
+    SONAR_TESTS_PATH: "apps/boss-app/src/app"
+    SONAR_TSLINT_CONFIG_PATH: ".eslintrc.json"
+    SONAR_COVERAGE_REPORT_PATH: "coverage/lcov.info || true"
+    SONAR_TESTS_INCLUSIONS: "**/*.spec.ts,**/*.module.ts"
+    SONAR_EXLUSIONS: "dist/**,node_modules/**,apps/boss-server/**,coverage/**,apps/boss-app.src/app/shared/utils/**,e2e/**,**/*.conf.js,**/*.mock.ts,**/*.model.ts,**/actions.ts,**/*.utils.ts"
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14
+
+    commands:
+      - echo Updating and Installing system dependencies...
+      - apt-get update -y -q
+
+      # Install all necessary dependencies:
+      - echo Installing NPM dependencies...
+      - npm config set unsafe-perm true
+      - npm install
+      - npm config set unsafe-perm false
+
+  build:
+    commands:
+      # Perform Code quality checks:
+      - echo Checking code style...
+      - npm run lint:client -- ${PROJECT_NAME}
+
+      - echo Running unit tests...
+      - npm run test:client:ci -- ${PROJECT_NAME}
+
+      - echo Building a project...
+      - npm run build:client -- ${PROJECT_NAME} --configuration=${PROJECT_CONFIGURATION}
+
+  post_build:
+    commands:
+      # Perform static code analysis with SonarScanner
+      - echo Performing static code analysis with SonarScanner and uploading reports...
+
+      - bash ./scripts/check-quality-with-sonar.sh
+
+      - echo All code quality checks are successfully completed on `date`

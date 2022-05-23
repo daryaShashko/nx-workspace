@@ -36,5 +36,11 @@
       }
     }
   },
+  "implicitDependencies": {
+    "buildSpecs/store-source-artifacts.yml": "*",
+    "nx.json": "*",
+    "buildSpecs/quality.yaml": ["newflix"],
+    "buildSpecs/release.yaml": ["newflix"]
+  },
   "defaultProject": "newflix"
 }
