@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button, SearchBar, Logo, FilmItem, FilmDescription, AddOrEditFilmForm } from './components';
 import AddIcon from '@mui/icons-material/Add';
@@ -29,6 +29,14 @@ export function App() {
     const [searchBarValue, setSearchBarValue] = useState('');
     const history = useHistory();
 
+    useEffect(() => {
+        (async () => {
+            let x = await fetch('http://localhost:3333/api/films');
+            x = await x.json();
+            console.log(x);
+        })();
+    }, []);
+
     const handleOnChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
         const {
             target: { value }
@@ -44,7 +52,13 @@ export function App() {
         console.log(data);
     };
 
-    const handleOnSearch = () => console.log('should search by searchBarValue', searchBarValue);
+    const handleOnSearch = async () => {
+        let x = await fetch(`http://localhost:3333/api/films/searchBy?title=${searchBarValue}`);
+        x = await x.json();
+        console.log(x);
+        console.log('should search by searchBarValue', searchBarValue);
+    };
+
     return (
         <Container>
             <Switch>
