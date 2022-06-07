@@ -39,8 +39,8 @@
   "implicitDependencies": {
     "buildSpecs/store-source-artifact.yml": "*",
     "nx.json": "*",
-    "buildSpecs/quality.yaml": ["newflix"],
-    "buildSpecs/release.yaml": ["newflix"]
+    "buildSpecs/client-quality.yaml": ["newflix"],
+    "buildSpecs/client-release.yaml": ["newflix"]
   },
   "defaultProject": "newflix"
 }
