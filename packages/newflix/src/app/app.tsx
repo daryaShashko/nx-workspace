@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button, SearchBar, Logo, FilmItem, FilmDescription, AddOrEditFilmForm } from './components';
 import AddIcon from '@mui/icons-material/Add';
@@ -12,10 +12,12 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 
 import NxWelcome from './nx-welcome';
+import { FILMS_URL, SEARCH_FILMS_BY_TITLE_URL } from './requests';
 
 import { Route, Link, useHistory, Switch } from 'react-router-dom';
 import { useState } from 'react';
 import { FormData } from './components/AddOrEditFilmForm/types';
+import { requestJSON, useFetch } from './useFetch';
 
 const Header = styled.header`
     padding: 0 0 80px 0;
@@ -25,9 +27,10 @@ const Header = styled.header`
     }
 `;
 
-export function App() {
+export const App = React.memo(() => {
     const [searchBarValue, setSearchBarValue] = useState('');
     const history = useHistory();
+    const [allFilms] = useFetch(FILMS_URL);
 
     const handleOnChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
         const {
@@ -44,7 +47,12 @@ export function App() {
         console.log(data);
     };
 
-    const handleOnSearch = () => console.log('should search by searchBarValue', searchBarValue);
+    const handleOnSearch = async () => {
+        const x = await requestJSON(`${SEARCH_FILMS_BY_TITLE_URL}${searchBarValue}`);
+        console.log(x);
+        console.log('should search by searchBarValue', searchBarValue);
+    };
+
     return (
         <Container>
             <Switch>
@@ -101,19 +109,35 @@ export function App() {
             </Switch>
 
             <Grid container spacing={8}>
-                {Array.from({ length: 10 }).map((number, index) => (
-                    <Grid item xs={4} key={index}>
-                        <FilmItem
-                            title={`some title_${index}`}
-                            date={new Date()}
-                            genre={'some genres'}
-                            onClick={() => history.push(`/films/${index}`)}
-                        />
-                    </Grid>
-                ))}
+                {allFilms &&
+                    allFilms
+                        .slice(0, 19)
+                        .map(
+                            ({
+                                id,
+                                title,
+                                release_date,
+                                poster_path,
+                                genres
+                            }: {
+                                id: number;
+                                title: string;
+                                release_date: string;
+                                poster_path: string;
+                                genres: string[];
+                            }) => (
+                                <Grid item xs={4} key={id}>
+                                    <FilmItem
+                                        title={title}
+                                        date={new Date(release_date)}
+                                        genre={genres}
+                                        img={poster_path}
+                                        onClick={() => history.push(`/films/${id}`)}
+                                    />
+                                </Grid>
+                            )
+                        )}
             </Grid>
         </Container>
     );
-}
-
-export default App;
+});

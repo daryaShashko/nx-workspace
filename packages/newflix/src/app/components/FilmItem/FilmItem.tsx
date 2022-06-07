@@ -94,7 +94,7 @@ export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onC
                     {title}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    {genre}
+                    {genre.join(', ')}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                     {date.toDateString()}
