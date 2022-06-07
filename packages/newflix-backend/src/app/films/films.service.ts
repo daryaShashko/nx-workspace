@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { resolve } from 'path';
-import { accessSync, createReadStream, writeFileSync, ReadStream, readFile } from 'fs';
-import * as fs from 'fs';
+import { accessSync, createReadStream, writeFileSync, ReadStream } from 'fs';
+import * as fs from 'fs/promises';
 import { Simulate } from 'react-dom/test-utils';
-import error = Simulate.error;
 
 @Injectable()
 export class FilmsService {
@@ -17,20 +16,20 @@ export class FilmsService {
 
     private getAccessToFile(): void {
         try {
-            fs.accessSync(this.filename);
+            accessSync(this.filename);
         } catch (err) {
-            fs.writeFileSync(this.filename, '[]');
+            writeFileSync(this.filename, '[]');
             console.error(err);
         }
     }
     getAll(): ReadStream {
-        return fs.createReadStream(this.filename, { encoding: 'utf8' });
+        return createReadStream(this.filename, { encoding: 'utf8' });
     }
 
     async findByQuery(query) {
         let movies;
         let data;
-        await fs.promises
+        await fs
             .readFile(this.filename, 'utf8')
             .then((data) => (movies = JSON.parse(data)))
             .catch((error) => {
