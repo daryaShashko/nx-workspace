@@ -1,23 +1,17 @@
-import React, { ChangeEvent, useEffect } from 'react';
+import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { Button, SearchBar, Logo, FilmItem, FilmDescription, AddOrEditFilmForm } from './components';
+import { Button, SearchBar, Logo, Films, FilmDescription, AddOrEditFilmForm } from './components';
 import AddIcon from '@mui/icons-material/Add';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+import { SEARCH_FILMS_BY_TITLE_URL } from './requests';
 
-import NxWelcome from './nx-welcome';
-import { FILMS_URL, SEARCH_FILMS_BY_TITLE_URL } from './requests';
-
-import { Route, Link, useHistory, Switch } from 'react-router-dom';
+import { Route, useHistory, Switch } from 'react-router-dom';
 import { useState } from 'react';
 import { FormData } from './components/AddOrEditFilmForm/types';
-import { requestJSON, useFetch } from './useFetch';
+import { requestJSON } from './useFetch';
 
 const Header = styled.header`
     padding: 0 0 80px 0;
@@ -30,7 +24,6 @@ const Header = styled.header`
 export const App = React.memo(() => {
     const [searchBarValue, setSearchBarValue] = useState('');
     const history = useHistory();
-    const [allFilms] = useFetch(FILMS_URL);
 
     const handleOnChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
         const {
@@ -109,34 +102,7 @@ export const App = React.memo(() => {
             </Switch>
 
             <Grid container spacing={8}>
-                {allFilms &&
-                    allFilms
-                        .slice(0, 19)
-                        .map(
-                            ({
-                                id,
-                                title,
-                                release_date,
-                                poster_path,
-                                genres
-                            }: {
-                                id: number;
-                                title: string;
-                                release_date: string;
-                                poster_path: string;
-                                genres: string[];
-                            }) => (
-                                <Grid item xs={4} key={id}>
-                                    <FilmItem
-                                        title={title}
-                                        date={new Date(release_date)}
-                                        genre={genres}
-                                        img={poster_path}
-                                        onClick={() => history.push(`/films/${id}`)}
-                                    />
-                                </Grid>
-                            )
-                        )}
+                <Films />
             </Grid>
         </Container>
     );

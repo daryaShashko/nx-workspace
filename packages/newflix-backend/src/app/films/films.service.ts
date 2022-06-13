@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { AppService } from '../app.service';
 import { resolve } from 'path';
-import { accessSync, createReadStream, writeFileSync, ReadStream } from 'fs';
+import { accessSync, writeFileSync } from 'fs';
 import * as fs from 'fs/promises';
-import { Simulate } from 'react-dom/test-utils';
 
 @Injectable()
 export class FilmsService {
@@ -22,23 +20,45 @@ export class FilmsService {
             console.error(err);
         }
     }
-    getAll(): ReadStream {
-        return createReadStream(this.filename, { encoding: 'utf8' });
-    }
 
-    async findByQuery(query) {
+    private async getAllMovies() {
         let movies;
-        let data;
         await fs
             .readFile(this.filename, 'utf8')
             .then((data) => (movies = JSON.parse(data)))
             .catch((error) => {
                 throw new Error(error);
             });
-        if (movies) {
-            data = movies.filter((item) => new RegExp(query, 'i').test(item.title));
-            return data;
+        return movies || [];
+    }
+
+    async getAll(page = 1) {
+        const allMovies = await this.getAllMovies();
+        const perPage = 9;
+        const totalPosts = allMovies.length;
+        const totalPages = Math.ceil(totalPosts / perPage);
+        const start = (+page - 1) * perPage;
+        let end = start + perPage;
+        if (end > totalPosts) {
+            end = totalPosts;
         }
-        return [];
+
+        return {
+            currentPage: page,
+            perPage: perPage,
+            totalCount: totalPosts,
+            pageCount: totalPages,
+            start: start,
+            end: end,
+            movies: allMovies.slice(start, end)
+        };
+    }
+
+    async findByQuery(query) {
+        const movies = await this.getAllMovies();
+        if (movies.length) {
+            return movies.filter((item) => new RegExp(query, 'i').test(item.title));
+        }
+        return movies;
     }
 }
