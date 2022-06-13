@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, Post, Put, Delete, Body, Request } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { FilmsService } from './films.service';
 
@@ -23,4 +23,23 @@ export class FilmsController {
         const x = await this.filmsService.getById(id);
         return x;
     }
+
+    @Post('/addFilm')
+    async addNewFilm(@Body() body) {
+        console.log(body);
+        const x = await this.filmsService.addFilm(body);
+        return x;
+    }
+
+    // @Put('/:id')
+    // async getById(@Param() { id }) {
+    //     const x = await this.filmsService.getById(id);
+    //     return x;
+    // }
+
+    // @Delete('/:id')
+    // async getById(@Param() { id }) {
+    //     const x = await this.filmsService.getById(id);
+    //     return x;
+    // }
 }

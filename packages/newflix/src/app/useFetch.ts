@@ -33,7 +33,14 @@ export const useFetch = (url: string, options?: RequestInit): UseFetchReturnValu
 export const requestJSON = async (url: string, options?: RequestInit) => {
     let responseJson;
     try {
-        const res = await fetch(url, options);
+        const requestOptions = {
+            ...options,
+            headers: {
+                ...options?.headers,
+                'Content-Type': 'application/json'
+            }
+        };
+        const res = await fetch(url, requestOptions);
         responseJson = await res.json();
     } catch (err: Error | any) {
         return new Error(err);

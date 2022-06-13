@@ -1,12 +1,11 @@
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { Button, SearchBar, Logo, Films, FilmDescription, AddOrEditFilmForm, Pagination } from './components';
-import AddIcon from '@mui/icons-material/Add';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
-import { FILMS_URL, SEARCH_FILMS_BY_TITLE_URL } from './requests';
+import { ADD_FILM_URL, FILMS_URL, SEARCH_FILMS_BY_TITLE_URL } from './requests';
 
 import { Route, useHistory, Switch } from 'react-router-dom';
 import { useState } from 'react';
@@ -60,8 +59,11 @@ export const App = React.memo(() => {
         setSearchBarValue(value);
     };
 
-    const onSaveFilm = (data: Partial<FormData>) => {
-        console.log(data);
+    const onSaveFilm = async (data: Partial<FormData>) => {
+        await requestJSON(ADD_FILM_URL, {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
     };
 
     const onCancel = (data: Partial<FormData>) => {

@@ -3,6 +3,25 @@ import { resolve } from 'path';
 import { accessSync, writeFileSync } from 'fs';
 import * as fs from 'fs/promises';
 
+export type FilmExtended = {
+    id: string;
+    poster_path: string;
+    genres: string[];
+    release_date: string;
+    title: string;
+    runtime: number;
+    vote_average: number;
+    overview: string;
+};
+
+export type FilmFromBody = {
+    releaseDate: string | null;
+    title: string;
+    genre: string;
+    description: string;
+    duration: string;
+};
+
 @Injectable()
 export class FilmsService {
     filename = '';
@@ -84,5 +103,28 @@ export class FilmsService {
             return movies.find((item) => +item.id === +id);
         }
         return movies;
+    }
+
+    async addFilm(film: FilmFromBody) {
+        const filmForFile = {
+            id: new Date().getTime(),
+            poster_path: 'https://culturaldetective.files.wordpress.com/2012/04/movies-film.jpg',
+            genres: film.genre,
+            release_date: film.releaseDate,
+            title: film.title,
+            runtime: film.duration,
+            vote_average: 0,
+            overview: film.description
+        };
+        await fs
+            .readFile(this.filename, 'utf8')
+            .then(async (data) => {
+                const x = JSON.parse(data).push(filmForFile);
+                await fs.writeFile(this.filename, JSON.stringify(x));
+            })
+            .catch((error) => {
+                throw new Error(error);
+            });
+        return filmForFile;
     }
 }
