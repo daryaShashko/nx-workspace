@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { FilmsService } from './films.service';
 
@@ -14,7 +14,13 @@ export class FilmsController {
 
     @Get('/searchBy')
     async getByQuery(@Query() query) {
-        const x = await this.filmsService.findByQuery(query.title);
+        const x = await this.filmsService.findByQuery(query.title, query.page);
+        return x;
+    }
+
+    @Get('/:id')
+    async getById(@Param() { id }) {
+        const x = await this.filmsService.getById(id);
         return x;
     }
 }

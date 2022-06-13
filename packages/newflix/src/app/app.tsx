@@ -1,17 +1,18 @@
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { Button, SearchBar, Logo, Films, FilmDescription, AddOrEditFilmForm } from './components';
+import { Button, SearchBar, Logo, Films, FilmDescription, AddOrEditFilmForm, Pagination } from './components';
 import AddIcon from '@mui/icons-material/Add';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
-import { SEARCH_FILMS_BY_TITLE_URL } from './requests';
+import { FILMS_URL, SEARCH_FILMS_BY_TITLE_URL } from './requests';
 
 import { Route, useHistory, Switch } from 'react-router-dom';
 import { useState } from 'react';
 import { FormData } from './components/AddOrEditFilmForm/types';
 import { requestJSON } from './useFetch';
+import { FilmPage } from './pages';
 
 const Header = styled.header`
     padding: 0 0 80px 0;
@@ -23,7 +24,34 @@ const Header = styled.header`
 
 export const App = React.memo(() => {
     const [searchBarValue, setSearchBarValue] = useState('');
-    const history = useHistory();
+    const [films, setFilms] = React.useState([]);
+    const [currPage, setCurrPage] = React.useState(1);
+    const [currPageForSearchResults, setCurrPageForSearchResults] = React.useState(1);
+    const [pageCountForSearchResults, setPageCountForSearchResults] = React.useState(0);
+    const [pageCount, setPageCount] = React.useState(0);
+    const onChangePage = React.useCallback(async (page: number) => setCurrPage(page), []);
+    const onChangePageForSearchResults = React.useCallback(
+        async (page: number) => setCurrPageForSearchResults(page),
+        []
+    );
+
+    React.useEffect(() => {
+        (async () => {
+            const resp = await requestJSON(`${FILMS_URL}?page=${currPage}`);
+            setFilms(resp.movies);
+            setPageCount(resp.pageCount);
+        })();
+    }, [currPage]);
+
+    React.useEffect(() => {
+        (async () => {
+            const resp = await requestJSON(
+                `${SEARCH_FILMS_BY_TITLE_URL}${searchBarValue}&page=${currPageForSearchResults}`
+            );
+            setFilms(resp.movies);
+            setPageCount(resp.pageCount);
+        })();
+    }, [currPageForSearchResults]);
 
     const handleOnChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
         const {
@@ -41,9 +69,9 @@ export const App = React.memo(() => {
     };
 
     const handleOnSearch = async () => {
-        const x = await requestJSON(`${SEARCH_FILMS_BY_TITLE_URL}${searchBarValue}`);
-        console.log(x);
-        console.log('should search by searchBarValue', searchBarValue);
+        const x = await requestJSON(`${SEARCH_FILMS_BY_TITLE_URL}${searchBarValue}&page=${currPageForSearchResults}`);
+        setFilms(x.movies);
+        setPageCountForSearchResults(x.pageCount);
     };
 
     return (
@@ -76,33 +104,23 @@ export const App = React.memo(() => {
                         match: {
                             params: { id }
                         }
-                    }) => (
-                        <Header>
-                            <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
-                                <Logo />
-                                <Button startIcon={<AddIcon />} onClick={() => history.push('/')}>
-                                    Find Film
-                                </Button>
-                            </Stack>
-
-                            <FilmDescription
-                                id={id}
-                                genre={`films_${id}`}
-                                date={new Date()}
-                                title={`Title_${id}`}
-                                duration={120}
-                                rate={4}
-                                description={
-                                    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsum, magni maiores numquam provident quia temporibus!'
-                                }
-                            />
-                        </Header>
-                    )}
+                    }) => <FilmPage filmId={id} />}
                 />
             </Switch>
 
             <Grid container spacing={8}>
-                <Films />
+                <Films films={films} />
+            </Grid>
+            <Grid container>
+                {searchBarValue ? (
+                    <Pagination
+                        currentPage={currPageForSearchResults}
+                        pageCount={pageCountForSearchResults}
+                        onPageClick={onChangePageForSearchResults}
+                    />
+                ) : (
+                    <Pagination currentPage={currPage} pageCount={pageCount} onPageClick={onChangePage} />
+                )}
             </Grid>
         </Container>
     );

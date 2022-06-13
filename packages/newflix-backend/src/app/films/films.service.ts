@@ -54,10 +54,34 @@ export class FilmsService {
         };
     }
 
-    async findByQuery(query) {
+    async findByQuery(query, page) {
+        const allMovies = await this.getAllMovies().then((data) =>
+            data.filter((item) => new RegExp(query, 'i').test(item.title))
+        );
+        const perPage = 9;
+        const totalPosts = allMovies.length;
+        const totalPages = Math.ceil(totalPosts / perPage);
+        const start = (+page - 1) * perPage;
+        let end = start + perPage;
+        if (end > totalPosts) {
+            end = totalPosts;
+        }
+
+        return {
+            currentPage: page,
+            perPage: perPage,
+            totalCount: totalPosts,
+            pageCount: totalPages,
+            start: start,
+            end: end,
+            movies: allMovies.slice(start, end)
+        };
+    }
+
+    async getById(id) {
         const movies = await this.getAllMovies();
         if (movies.length) {
-            return movies.filter((item) => new RegExp(query, 'i').test(item.title));
+            return movies.find((item) => +item.id === +id);
         }
         return movies;
     }
