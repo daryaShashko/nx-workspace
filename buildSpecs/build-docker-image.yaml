@@ -6,7 +6,7 @@ phases:
     commands:
       # Update system packages
       - echo Updating and Installing system dependencies...
-      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+#      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
       # tempo fix "|| true"
       - apt-get update -y -q --list-cleanup || true
 
