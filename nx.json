@@ -39,6 +39,7 @@
   "implicitDependencies": {
     "buildSpecs/store-source-artifact.yml": ["newflix-backend"],
     "buildSpecs/build-docker-image.yaml": ["newflix-backend"],
+    "docker-files/Dockerfile": ["newflix-backend"],
     "nx.json": "*",
     "buildSpecs/client-quality.yaml": ["newflix"],
     "buildSpecs/client-release.yaml": ["newflix"]
