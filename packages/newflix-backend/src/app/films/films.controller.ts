@@ -37,9 +37,9 @@ export class FilmsController {
     //     return x;
     // }
 
-    // @Delete('/:id')
-    // async getById(@Param() { id }) {
-    //     const x = await this.filmsService.getById(id);
-    //     return x;
-    // }
+    @Delete('/delete/:id')
+    async deleteFilmById(@Param() { id }) {
+        const x = await this.filmsService.delete(id);
+        return x;
+    }
 }

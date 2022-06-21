@@ -127,4 +127,12 @@ export class FilmsService {
             });
         return filmForFile;
     }
+
+    async delete(id) {
+        const movies = await this.getAllMovies();
+        if (movies.length) {
+            return movies.find((item) => +item.id !== +id);
+        }
+        return movies;
+    }
 }
