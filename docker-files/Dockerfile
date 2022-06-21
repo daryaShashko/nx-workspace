@@ -1,8 +1,7 @@
 FROM 055264279425.dkr.ecr.us-east-1.amazonaws.com/base-images:node-18-alpine as base
 
 RUN apk add --update && \
-    apk add --no-cache unzip git python3 make gcc g++ && \
-    rm -rf /var/lib/apt/lists/*
+    apk add --no-cache unzip git && \
 FROM base as build
 RUN mkdir -p /tmp/newflix
 WORKDIR /tmp/newflix
