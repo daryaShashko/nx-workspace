@@ -1,0 +1,42 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+# Log files
+application.log
+exceptions.log
+npm-debug.log*
+# Temp folder
+/server/static/tmp/*
+!/server/static/tmp/.gitkeep
+cloudformation.json
+# compiled output
+/dist
+/tmp
+/doc
+# dependencies
+/node_modules
+/bower_components
+# IDEs and editors
+/.idea
+/.vscode
+.project
+.classpath
+*.launch
+.settings/
+# misc
+/.sass-cache
+/connect.lock
+/coverage/*
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
+.jshintignore
+.jshintrc
+external.config.json
+# e2e
+/e2e/*.js
+/e2e/*.map
+#System Files
+.DS_Store
+Thumbs.db
+/server/node_modules
+/server/dist

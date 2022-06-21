@@ -1,23 +1,17 @@
-import React, { ChangeEvent, useEffect } from 'react';
+import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { Button, SearchBar, Logo, FilmItem, FilmDescription, AddOrEditFilmForm } from './components';
-import AddIcon from '@mui/icons-material/Add';
+import { Button, SearchBar, Logo, Films, FilmDescription, AddOrEditFilmForm, Pagination } from './components';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+import { ADD_FILM_URL, FILMS_URL, SEARCH_FILMS_BY_TITLE_URL } from './requests';
 
-import NxWelcome from './nx-welcome';
-import { FILMS_URL, SEARCH_FILMS_BY_TITLE_URL } from './requests';
-
-import { Route, Link, useHistory, Switch } from 'react-router-dom';
+import { Route, useHistory, Switch } from 'react-router-dom';
 import { useState } from 'react';
 import { FormData } from './components/AddOrEditFilmForm/types';
-import { requestJSON, useFetch } from './useFetch';
+import { requestJSON } from './useFetch';
+import { FilmPage } from './pages';
 
 const Header = styled.header`
     padding: 0 0 80px 0;
@@ -29,8 +23,34 @@ const Header = styled.header`
 
 export const App = React.memo(() => {
     const [searchBarValue, setSearchBarValue] = useState('');
-    const history = useHistory();
-    const [allFilms] = useFetch(FILMS_URL);
+    const [films, setFilms] = React.useState([]);
+    const [currPage, setCurrPage] = React.useState(1);
+    const [currPageForSearchResults, setCurrPageForSearchResults] = React.useState(1);
+    const [pageCountForSearchResults, setPageCountForSearchResults] = React.useState(0);
+    const [pageCount, setPageCount] = React.useState(0);
+    const onChangePage = React.useCallback(async (page: number) => setCurrPage(page), []);
+    const onChangePageForSearchResults = React.useCallback(
+        async (page: number) => setCurrPageForSearchResults(page),
+        []
+    );
+
+    React.useEffect(() => {
+        (async () => {
+            const resp = await requestJSON(`${FILMS_URL}?page=${currPage}`);
+            setFilms(resp.movies);
+            setPageCount(resp.pageCount);
+        })();
+    }, [currPage]);
+
+    React.useEffect(() => {
+        (async () => {
+            const resp = await requestJSON(
+                `${SEARCH_FILMS_BY_TITLE_URL}${searchBarValue}&page=${currPageForSearchResults}`
+            );
+            setFilms(resp.movies);
+            setPageCount(resp.pageCount);
+        })();
+    }, [currPageForSearchResults]);
 
     const handleOnChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
         const {
@@ -39,8 +59,11 @@ export const App = React.memo(() => {
         setSearchBarValue(value);
     };
 
-    const onSaveFilm = (data: Partial<FormData>) => {
-        console.log(data);
+    const onSaveFilm = async (data: Partial<FormData>) => {
+        await requestJSON(ADD_FILM_URL, {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
     };
 
     const onCancel = (data: Partial<FormData>) => {
@@ -48,9 +71,9 @@ export const App = React.memo(() => {
     };
 
     const handleOnSearch = async () => {
-        const x = await requestJSON(`${SEARCH_FILMS_BY_TITLE_URL}${searchBarValue}`);
-        console.log(x);
-        console.log('should search by searchBarValue', searchBarValue);
+        const x = await requestJSON(`${SEARCH_FILMS_BY_TITLE_URL}${searchBarValue}&page=${currPageForSearchResults}`);
+        setFilms(x.movies);
+        setPageCountForSearchResults(x.pageCount);
     };
 
     return (
@@ -83,60 +106,23 @@ export const App = React.memo(() => {
                         match: {
                             params: { id }
                         }
-                    }) => (
-                        <Header>
-                            <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
-                                <Logo />
-                                <Button startIcon={<AddIcon />} onClick={() => history.push('/')}>
-                                    Find Film
-                                </Button>
-                            </Stack>
-
-                            <FilmDescription
-                                id={id}
-                                genre={`films_${id}`}
-                                date={new Date()}
-                                title={`Title_${id}`}
-                                duration={120}
-                                rate={4}
-                                description={
-                                    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsum, magni maiores numquam provident quia temporibus!'
-                                }
-                            />
-                        </Header>
-                    )}
+                    }) => <FilmPage filmId={id} />}
                 />
             </Switch>
 
             <Grid container spacing={8}>
-                {allFilms &&
-                    allFilms
-                        .slice(0, 19)
-                        .map(
-                            ({
-                                id,
-                                title,
-                                release_date,
-                                poster_path,
-                                genres
-                            }: {
-                                id: number;
-                                title: string;
-                                release_date: string;
-                                poster_path: string;
-                                genres: string[];
-                            }) => (
-                                <Grid item xs={4} key={id}>
-                                    <FilmItem
-                                        title={title}
-                                        date={new Date(release_date)}
-                                        genre={genres}
-                                        img={poster_path}
-                                        onClick={() => history.push(`/films/${id}`)}
-                                    />
-                                </Grid>
-                            )
-                        )}
+                <Films films={films} />
+            </Grid>
+            <Grid container>
+                {searchBarValue ? (
+                    <Pagination
+                        currentPage={currPageForSearchResults}
+                        pageCount={pageCountForSearchResults}
+                        onPageClick={onChangePageForSearchResults}
+                    />
+                ) : (
+                    <Pagination currentPage={currPage} pageCount={pageCount} onPageClick={onChangePage} />
+                )}
             </Grid>
         </Container>
     );

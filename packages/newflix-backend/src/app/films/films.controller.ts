@@ -1,24 +1,45 @@
-import { Controller, Get, Response, StreamableFile, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, Post, Put, Delete, Body, Request } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { FilmsService } from './films.service';
-import { createReadStream, ReadStream, accessSync, writeFileSync } from 'fs';
-import { resolve } from 'path';
 
 @Controller('films')
 export class FilmsController {
     constructor(private readonly appService: AppService, private readonly filmsService: FilmsService) {}
 
     @Get()
-    getFilms() {
-        const readableStream = this.filmsService.getAll();
-        return new StreamableFile(readableStream);
+    async getFilms(@Query() query) {
+        const x = await this.filmsService.getAll(query.page);
+        return x;
     }
 
     @Get('/searchBy')
     async getByQuery(@Query() query) {
-        console.log('---query', query);
-        const x = await this.filmsService.findByQuery(query.title);
-        console.log('-----x', x);
+        const x = await this.filmsService.findByQuery(query.title, query.page);
+        return x;
+    }
+
+    @Get('/:id')
+    async getById(@Param() { id }) {
+        const x = await this.filmsService.getById(id);
+        return x;
+    }
+
+    @Post('/addFilm')
+    async addNewFilm(@Body() body) {
+        console.log(body);
+        const x = await this.filmsService.addFilm(body);
+        return x;
+    }
+
+    // @Put('/:id')
+    // async getById(@Param() { id }) {
+    //     const x = await this.filmsService.getById(id);
+    //     return x;
+    // }
+
+    @Delete('/delete/:id')
+    async deleteFilmById(@Param() { id }) {
+        const x = await this.filmsService.delete(id);
         return x;
     }
 }

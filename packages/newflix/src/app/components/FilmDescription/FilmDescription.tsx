@@ -34,7 +34,7 @@ export const FilmDescription: React.FC<FilmDescriptionProps> = ({
                     </Typography>
                     <Rating name="half-rating-read" defaultValue={2.5} precision={0.5} readOnly />
                     <Typography variant="body2" color="text.secondary">
-                        {genre}
+                        {genre.join(', ')}
                     </Typography>
                     <Stack spacing={2} direction={'row'}>
                         <Typography variant="body2" color="text.secondary">
