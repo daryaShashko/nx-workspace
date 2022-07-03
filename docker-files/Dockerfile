@@ -1,12 +1,14 @@
-FROM 055264279425.dkr.ecr.us-east-1.amazonaws.com/base-images:node-16.15.1-alpine as base
+FROM 055264279425.dkr.ecr.us-east-1.amazonaws.com/base-images:node-18-alpine as base
 
-RUN apk update && apk add --no-cache unzip git
+RUN apk add --update && \
+    apk add --no-cache unzip git python3 make gcc g++ && \
+    rm -rf /var/lib/apt/lists/*
 FROM base as build
 RUN mkdir -p /tmp/newflix
 WORKDIR /tmp/newflix
 COPY . /tmp/newflix
 # Install dependencies
-RUN #npm install -g @nrwl/cli
+RUN npm install -g @nrwl/cli
 RUN #npm install husky
 RUN npm install
 # Build BOSS server
