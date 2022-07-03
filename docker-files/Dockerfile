@@ -22,4 +22,4 @@ COPY --from=build /tmp/newflix/package*.json ./
 RUN #npm install --only=production
 COPY --from=build /tmp/newflix/dist/packages/newflix-backend /newflix
 EXPOSE  80
-ENTRYPOINT [ "/bin/sh", "-c", "node ./main.js" ]
+ENTRYPOINT ["./main.js" ]
