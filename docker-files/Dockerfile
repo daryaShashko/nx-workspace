@@ -1,4 +1,4 @@
-FROM 055264279425.dkr.ecr.us-east-1.amazonaws.com/base-images:node-16-alpine as base
+FROM 055264279425.dkr.ecr.us-east-1.amazonaws.com/base-images:node-16.15.1-alpine as base
 
 RUN apk add --no-cache git
 FROM base as build
