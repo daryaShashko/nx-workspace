@@ -19,7 +19,7 @@ FROM base as application
 RUN mkdir -p /newflix
 WORKDIR /newflix
 COPY --from=build /tmp/newflix/package*.json ./
-RUN #npm install --only=production
+RUN npm install
 COPY --from=build /tmp/newflix/dist/packages/newflix-backend /newflix
 EXPOSE  80
 ENTRYPOINT [ "/bin/sh", "-c", "node ./main.js" ]
