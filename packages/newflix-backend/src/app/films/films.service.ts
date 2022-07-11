@@ -26,8 +26,7 @@ export type FilmFromBody = {
 export class FilmsService {
     filename = '';
     constructor() {
-        this.filename = resolve(process.cwd(), 'packages/newflix-backend/src/assets/data', 'movies.json');
-
+        this.filename = resolve(__dirname, 'src', '../assets/data', 'movies.json');
         this.getAccessToFile();
     }
 
