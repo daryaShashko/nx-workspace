@@ -1,19 +1,10 @@
 import * as React from 'react';
 import Card from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Collapse from '@mui/material/Collapse';
-import CardHeader from '@mui/material/CardHeader';
+import IconButton from '@mui/material/IconButton';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Popover from '@mui/material/Popover';
-import CardActions from '@mui/material/CardActions';
-import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-import CardActionArea from '@mui/material/CardActionArea';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { FilmItemProps } from './types';
 
@@ -25,8 +16,10 @@ import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { grey } from '@mui/material/colors';
+import { Dialog } from '../Dialog';
+import { DialogImperativeHandlersProps } from '../Dialog/Dialog';
 
-export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onClick }) => {
+export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onClick, onEdit, onDelete }) => {
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -64,7 +57,7 @@ export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onC
                 }}>
                 <List sx={{ width: 200, maxWidth: 360, bgcolor: grey[50] }} aria-label="film-dialog">
                     <ListItem disablePadding>
-                        <ListItemButton>
+                        <ListItemButton onClick={onDelete}>
                             <ListItemIcon>
                                 <DeleteIcon />
                             </ListItemIcon>
@@ -74,7 +67,7 @@ export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onC
                     <ListItem disablePadding>
                         <ListItemButton>
                             <ListItemIcon>
-                                <EditIcon />
+                                <EditIcon onClick={onEdit} />
                             </ListItemIcon>
                             <ListItemText primary="Edit" />
                         </ListItemButton>

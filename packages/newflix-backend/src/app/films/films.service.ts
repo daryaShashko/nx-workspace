@@ -75,7 +75,7 @@ export class FilmsService {
 
     async findByQuery(query, page) {
         const allMovies = await this.getAllMovies().then((data) =>
-            data.filter((item) => new RegExp(query, 'i').test(item.title))
+            data?.filter((item) => new RegExp(query, 'i').test(item.title))
         );
         const perPage = 9;
         const totalPosts = allMovies.length;
@@ -119,7 +119,7 @@ export class FilmsService {
         await fs
             .readFile(this.filename, 'utf8')
             .then(async (data) => {
-                const x = JSON.parse(data).push(filmForFile);
+                const x = JSON.parse(data).concat(filmForFile);
                 await fs.writeFile(this.filename, JSON.stringify(x));
             })
             .catch((error) => {
@@ -128,11 +128,47 @@ export class FilmsService {
         return filmForFile;
     }
 
+    async changeFilm(id, film) {
+        const newDataForTargetFilm = {
+            genres: film.genre,
+            release_date: film.releaseDate,
+            title: film.title,
+            runtime: film.duration,
+            overview: film.description
+        };
+
+        const targetFilm = await this.getById(id);
+        const mergedFilm = { ...targetFilm, ...newDataForTargetFilm };
+
+        await fs
+            .readFile(this.filename, 'utf8')
+            .then(async (data) => {
+                const films = JSON.parse(data);
+                for (film in films) {
+                    if (film.id === id) {
+                        return mergedFilm;
+                    }
+                    console.log(film);
+                }
+
+                await fs.writeFile(this.filename, JSON.stringify(films));
+            })
+            .catch((error) => {
+                throw new Error(error);
+            });
+        return mergedFilm;
+    }
+
     async delete(id) {
-        const movies = await this.getAllMovies();
-        if (movies.length) {
-            return movies.find((item) => +item.id !== +id);
-        }
-        return movies;
+        await fs
+            .readFile(this.filename, 'utf8')
+            .then(async (data) => {
+                const x = JSON.parse(data).filter((item) => +item.id !== +id);
+                await fs.writeFile(this.filename, JSON.stringify(x));
+            })
+            .catch((error) => {
+                throw new Error(error);
+            });
+        return id;
     }
 }

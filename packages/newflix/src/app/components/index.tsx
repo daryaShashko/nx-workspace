@@ -8,6 +8,7 @@ export { FilmDescription } from './FilmDescription';
 export { AddOrEditFilmForm } from './AddOrEditFilmForm';
 export { Films } from './Films';
 export { Pagination } from './Pagination';
+export { Dialog } from './Dialog';
 
 // shared types
 export { BaseLayoutProps } from './types.shared';

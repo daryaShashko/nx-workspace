@@ -12,6 +12,8 @@ import { useState } from 'react';
 import { FormData } from './components/AddOrEditFilmForm/types';
 import { requestJSON } from './useFetch';
 import { FilmPage } from './pages';
+import AddIcon from '@mui/icons-material/Add';
+import { DialogImperativeHandlersProps } from './components/Dialog/Dialog';
 
 const Header = styled.header`
     padding: 0 0 80px 0;
@@ -22,6 +24,7 @@ const Header = styled.header`
 `;
 
 export const App = React.memo(() => {
+    const editDialogRef = React.useRef<DialogImperativeHandlersProps>(null);
     const [searchBarValue, setSearchBarValue] = useState('');
     const [films, setFilms] = React.useState([]);
     const [currPage, setCurrPage] = React.useState(1);
@@ -51,6 +54,10 @@ export const App = React.memo(() => {
             setPageCount(resp.pageCount);
         })();
     }, [currPageForSearchResults]);
+
+    const openEditDialog = () => {
+        editDialogRef.current?.toggleDialog();
+    };
 
     const handleOnChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
         const {
@@ -86,7 +93,10 @@ export const App = React.memo(() => {
                         <Header>
                             <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
                                 <Logo />
-                                <AddOrEditFilmForm onCancel={onCancel} onSave={onSaveFilm} />
+                                <Button startIcon={<AddIcon />} onClick={openEditDialog}>
+                                    Add Film
+                                </Button>
+                                <AddOrEditFilmForm ref={editDialogRef} onCancel={onCancel} onSave={onSaveFilm} />
                             </Stack>
 
                             <Stack spacing={2}>

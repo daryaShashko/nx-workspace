@@ -1,7 +1,7 @@
 export type FormData = {
     releaseDate: string | null;
     title: string;
-    genre: string;
+    genre: string[];
     description: string;
     duration: string;
 };

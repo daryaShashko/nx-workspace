@@ -4,4 +4,6 @@ export type FilmItemProps = {
     genre: string[];
     date: Date;
     onClick: () => void;
+    onEdit: () => void;
+    onDelete: () => void;
 };

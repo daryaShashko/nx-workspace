@@ -14,4 +14,7 @@ export type FilmResponseExtended = {
     overview: string;
 };
 
-export type FilmResponse = Pick<FilmResponseExtended, 'id' | 'poster_path' | 'genres' | 'release_date' | 'title'>;
+export type FilmResponse = Pick<
+    FilmResponseExtended,
+    'id' | 'poster_path' | 'genres' | 'release_date' | 'title' | 'overview' | 'runtime'
+>;
