@@ -21,5 +21,5 @@ WORKDIR /newflix
 COPY --from=build /tmp/newflix/package*.json ./
 RUN npm install
 COPY --from=build /tmp/newflix/dist/packages/newflix-backend /newflix
-EXPOSE  80
+EXPOSE  3333
 ENTRYPOINT [ "/bin/sh", "-c", "node ./main.js" ]
