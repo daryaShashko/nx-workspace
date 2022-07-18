@@ -29,23 +29,7 @@ phases:
     commands:
 #      - echo Application deployment is started on `date`
 #      - printf '{"Image":"%s"}' "055264279425.dkr.ecr.us-east-1.amazonaws.com/newflix:${CODEBUILD_BUILD_NUMBER}" > "image-def.json"
-      - (jq -n \
-          --arg imagename "055264279425.dkr.ecr.us-east-1.amazonaws.com/newflix:${CODEBUILD_BUILD_NUMBER}" \
-          --arg update 'true' \
-          --arg port "3333" \
-          '{
-          AWSEBDockerrunVersion: "1",
-          Image: {
-              Name: $imagename,
-              Update: $update,
-          },
-          Ports: [
-              {
-                  ContainerPort: $port
-              }
-          ]
-        }') > "$PWD/Dockerrun.aws.json"
-
+      - bash ./scripts/generateDockerRun.sh 055264279425.dkr.ecr.us-east-1.amazonaws.com/newflix:${CODEBUILD_BUILD_NUMBER}
 artifacts:
     files:
         - Dockerrun.aws.json
