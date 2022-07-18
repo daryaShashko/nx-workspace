@@ -23,12 +23,29 @@ phases:
       - docker tag newflix:${CODEBUILD_BUILD_NUMBER} 055264279425.dkr.ecr.us-east-1.amazonaws.com/newflix:${CODEBUILD_BUILD_NUMBER}
       - docker tag newflix:latest 055264279425.dkr.ecr.us-east-1.amazonaws.com/newflix:latest
       - docker push 055264279425.dkr.ecr.us-east-1.amazonaws.com/newflix --all-tags
+      -
 
   post_build:
     commands:
 #      - echo Application deployment is started on `date`
-      - printf '{"Image":"%s"}' "055264279425.dkr.ecr.us-east-1.amazonaws.com/newflix:${CODEBUILD_BUILD_NUMBER}" > "image-def.json"
+#      - printf '{"Image":"%s"}' "055264279425.dkr.ecr.us-east-1.amazonaws.com/newflix:${CODEBUILD_BUILD_NUMBER}" > "image-def.json"
+      - (jq -n \
+          --arg imagename "055264279425.dkr.ecr.us-east-1.amazonaws.com/newflix:${CODEBUILD_BUILD_NUMBER}" \
+          --arg update 'true' \
+          --arg port "3333" \
+          '{
+          AWSEBDockerrunVersion: "1",
+          Image: {
+              Name: $imagename,
+              Update: $update,
+          },
+          Ports: [
+              {
+                  ContainerPort: $port
+              }
+          ]
+        }') > "$PWD/Dockerrun.aws.json"
 
 artifacts:
     files:
-        - image-def.json
+        - Dockerrun.aws.json
