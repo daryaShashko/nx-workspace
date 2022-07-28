@@ -6,8 +6,9 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import { ADD_FILM_URL, FILMS_URL, SEARCH_FILMS_BY_TITLE_URL } from './requests';
+import { useSnackbar } from 'notistack';
 
-import { Route, useHistory, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { useState } from 'react';
 import { FormData } from './components/AddOrEditFilmForm/types';
 import { requestJSON } from './useFetch';
@@ -32,6 +33,7 @@ export const App = React.memo(() => {
     const [pageCountForSearchResults, setPageCountForSearchResults] = React.useState(0);
     const [pageCount, setPageCount] = React.useState(0);
     const onChangePage = React.useCallback(async (page: number) => setCurrPage(page), []);
+    const { enqueueSnackbar } = useSnackbar();
     const onChangePageForSearchResults = React.useCallback(
         async (page: number) => setCurrPageForSearchResults(page),
         []
@@ -56,7 +58,7 @@ export const App = React.memo(() => {
     }, [currPageForSearchResults]);
 
     const openEditDialog = () => {
-        editDialogRef.current?.toggleDialog();
+        editDialogRef.current?.openDialog();
     };
 
     const handleOnChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
@@ -67,10 +69,15 @@ export const App = React.memo(() => {
     };
 
     const onSaveFilm = async (data: Partial<FormData>) => {
-        await requestJSON(ADD_FILM_URL, {
-            method: 'POST',
-            body: JSON.stringify(data)
-        });
+        try {
+            await requestJSON(ADD_FILM_URL, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            enqueueSnackbar('Film is saved', { variant: 'success' });
+        } catch (err) {
+            enqueueSnackbar('Some error', { variant: 'error' });
+        }
     };
 
     const onCancel = (data: Partial<FormData>) => {

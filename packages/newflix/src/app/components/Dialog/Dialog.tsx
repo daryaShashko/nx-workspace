@@ -16,15 +16,18 @@ export type DialogProps = {
     onDisagree?: () => void;
 };
 
-export type DialogImperativeHandlersProps = { toggleDialog: () => void };
+export type DialogImperativeHandlersProps = { openDialog: () => void; closeDialog: () => void };
 
 export const Dialog = React.forwardRef<DialogImperativeHandlersProps, DialogProps>(
     ({ title, description, onClose, onAgree, onOpen, onDisagree }, ref) => {
         const [open, setOpen] = React.useState(false);
 
         useImperativeHandle(ref, () => ({
-            toggleDialog() {
-                setOpen(!open);
+            openDialog() {
+                setOpen(true);
+            },
+            closeDialog() {
+                setOpen(false);
             }
         }));
 

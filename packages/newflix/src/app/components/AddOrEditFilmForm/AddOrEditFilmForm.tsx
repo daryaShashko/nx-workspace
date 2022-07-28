@@ -19,7 +19,7 @@ const StyledDialogContent = styled.div`
     padding: 20px 0;
 `;
 
-export type DialogImperativeHandlersProps = { toggleDialog: () => void };
+export type DialogImperativeHandlersProps = { openDialog: () => void; closeDialog: () => void };
 
 export const AddOrEditFilmForm = React.forwardRef<DialogImperativeHandlersProps, AddOrEditFilmFormProps>(
     ({ releaseDate, title, genre, description, duration, onSave, onCancel }, ref) => {
@@ -34,8 +34,11 @@ export const AddOrEditFilmForm = React.forwardRef<DialogImperativeHandlersProps,
         const [open, setOpen] = useState<boolean>(false);
 
         useImperativeHandle(ref, () => ({
-            toggleDialog() {
-                setOpen(!open);
+            openDialog() {
+                setOpen(true);
+            },
+            closeDialog() {
+                setOpen(false);
             }
         }));
 
@@ -61,13 +64,14 @@ export const AddOrEditFilmForm = React.forwardRef<DialogImperativeHandlersProps,
 
         const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault();
+            handleClose();
             onSave(data);
         };
 
         const onReset = (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault();
-            onCancel(data);
             handleClose();
+            onCancel(data);
         };
 
         const handleClose = useCallback(() => {
