@@ -61,6 +61,10 @@ export const App = React.memo(() => {
         editDialogRef.current?.openDialog();
     };
 
+    const closeEditDialog = () => {
+        editDialogRef.current?.closeDialog();
+    };
+
     const handleOnChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
         const {
             target: { value }
@@ -81,7 +85,7 @@ export const App = React.memo(() => {
     };
 
     const onCancel = (data: Partial<FormData>) => {
-        console.log(data);
+        closeEditDialog();
     };
 
     const handleOnSearch = async () => {
@@ -119,6 +123,7 @@ export const App = React.memo(() => {
                 />
                 <Route
                     path="/films/:id"
+                    exact
                     render={({
                         match: {
                             params: { id }

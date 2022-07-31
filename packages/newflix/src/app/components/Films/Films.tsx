@@ -7,12 +7,24 @@ import { Dialog } from '../Dialog';
 import { DialogImperativeHandlersProps } from '../Dialog/Dialog';
 import { AddOrEditFilmForm } from '../AddOrEditFilmForm';
 import { requestJSON } from '../../useFetch';
-import { ADD_FILM_URL, DELETE_FILM_URL, EDIT_FILM_URL } from '../../requests';
+import { DELETE_FILM_URL, EDIT_FILM_URL } from '../../requests';
 import { FormData } from '../AddOrEditFilmForm/types';
 import { useSnackbar } from 'notistack';
 
+const initState = {
+    genres: [],
+    id: '',
+    overview: '',
+    poster_path: '',
+    release_date: '',
+    runtime: 0,
+    title: ''
+};
+
 export const Films: React.FC<{ films: FilmResponse[] }> = ({ films }) => {
     const { enqueueSnackbar } = useSnackbar();
+    const [editItem, setEditItem] = React.useState<FilmResponse>(initState);
+    const [deleteItem, setDeleteItem] = React.useState<FilmResponse>(initState);
     const history = useHistory();
     const deleteDialogRef = React.useRef<DialogImperativeHandlersProps>(null);
     const editDialogRef = React.useRef<DialogImperativeHandlersProps>(null);
@@ -37,6 +49,7 @@ export const Films: React.FC<{ films: FilmResponse[] }> = ({ films }) => {
         try {
             await requestJSON(`${DELETE_FILM_URL}/${id}`, { method: 'DELETE' });
             deleteDialogRef.current?.closeDialog();
+            history.replace('/');
             enqueueSnackbar('Film is deleted', { variant: 'success' });
         } catch (err) {
             enqueueSnackbar('Some error', { variant: 'error' });
@@ -56,37 +69,43 @@ export const Films: React.FC<{ films: FilmResponse[] }> = ({ films }) => {
     return (
         <>
             {films &&
-                films.map(({ id, title, release_date, poster_path, genres, overview, runtime }) => (
-                    <Grid item xs={4} key={id}>
+                films.map((item) => (
+                    <Grid item xs={4} key={item.id}>
                         <FilmItem
-                            title={title}
-                            date={new Date(release_date)}
-                            genre={genres}
-                            img={poster_path}
-                            onClick={() => history.push(`/films/${id}`)}
-                            onEdit={openEditDialog}
-                            onDelete={openDeleteDialog}
-                        />
-                        <Dialog
-                            title={`Delete ${title}`}
-                            description={`Are you sure want to delete film ${title} from data base`}
-                            onAgree={() => onDeleteFilm(id)}
-                            onDisagree={closeDeleteDialog}
-                            ref={deleteDialogRef}
-                        />
-
-                        <AddOrEditFilmForm
-                            ref={editDialogRef}
-                            releaseDate={release_date}
-                            title={title}
-                            genre={genres}
-                            description={overview}
-                            duration={runtime.toString()}
-                            onSave={(data) => onEditFilm(data, id)}
-                            onCancel={closeEditDialog}
+                            title={item.title}
+                            date={new Date(item.release_date)}
+                            genre={item.genres}
+                            img={item.poster_path}
+                            onClick={() => history.push(`/films/${item.id}`)}
+                            onEdit={() => {
+                                setEditItem(item);
+                                openEditDialog();
+                            }}
+                            onDelete={() => {
+                                setDeleteItem(item);
+                                openDeleteDialog();
+                            }}
                         />
                     </Grid>
                 ))}
+            <Dialog
+                title={`Delete ${deleteItem.title}`}
+                description={`Are you sure want to delete film ${deleteItem.title} from data base`}
+                onAgree={() => onDeleteFilm(deleteItem.id)}
+                onDisagree={closeDeleteDialog}
+                ref={deleteDialogRef}
+            />
+
+            <AddOrEditFilmForm
+                ref={editDialogRef}
+                releaseDate={editItem.release_date}
+                title={editItem.title}
+                genre={editItem.genres}
+                description={editItem.overview}
+                duration={editItem.runtime.toString()}
+                onSave={(data) => onEditFilm(data, editItem.id)}
+                onCancel={closeEditDialog}
+            />
         </>
     );
 };

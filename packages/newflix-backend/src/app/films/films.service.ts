@@ -162,7 +162,13 @@ export class FilmsService {
         await fs
             .readFile(this.filename, 'utf8')
             .then(async (data) => {
-                const x = JSON.parse(data).filter((item) => +item.id !== +id);
+                const x = JSON.parse(data).filter((item) => {
+                    if (item.id.toString() !== id.toString()) {
+                        return true;
+                    } else {
+                        console.log(item, id);
+                    }
+                });
                 await fs.writeFile(this.filename, JSON.stringify(x));
             })
             .catch((error) => {

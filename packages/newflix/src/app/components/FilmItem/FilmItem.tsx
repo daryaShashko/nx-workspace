@@ -16,8 +16,6 @@ import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { grey } from '@mui/material/colors';
-import { Dialog } from '../Dialog';
-import { DialogImperativeHandlersProps } from '../Dialog/Dialog';
 
 export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onClick, onEdit, onDelete }) => {
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
@@ -28,6 +26,17 @@ export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onC
 
     const handleClose = () => {
         setAnchorEl(null);
+    };
+    const handleEditClick = (event: React.MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation();
+        handleClose();
+        onEdit();
+    };
+
+    const handleDeleteClick = (event: React.MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation();
+        handleClose();
+        onDelete();
     };
 
     const open = Boolean(anchorEl);
@@ -57,7 +66,7 @@ export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onC
                 }}>
                 <List sx={{ width: 200, maxWidth: 360, bgcolor: grey[50] }} aria-label="film-dialog">
                     <ListItem disablePadding>
-                        <ListItemButton onClick={onDelete}>
+                        <ListItemButton onClick={handleDeleteClick}>
                             <ListItemIcon>
                                 <DeleteIcon />
                             </ListItemIcon>
@@ -65,7 +74,7 @@ export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onC
                         </ListItemButton>
                     </ListItem>
                     <ListItem disablePadding>
-                        <ListItemButton onClick={onEdit}>
+                        <ListItemButton onClick={handleEditClick}>
                             <ListItemIcon>
                                 <EditIcon />
                             </ListItemIcon>
