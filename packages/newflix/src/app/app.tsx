@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { Button, SearchBar, Logo, Films, FilmDescription, AddOrEditFilmForm, Pagination } from './components';
+import { Button, SearchBar, Logo, Films, AddOrEditFilmForm, Pagination } from './components';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';

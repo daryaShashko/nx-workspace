@@ -65,9 +65,9 @@ export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onC
                         </ListItemButton>
                     </ListItem>
                     <ListItem disablePadding>
-                        <ListItemButton>
+                        <ListItemButton onClick={onEdit}>
                             <ListItemIcon>
-                                <EditIcon onClick={onEdit} />
+                                <EditIcon />
                             </ListItemIcon>
                             <ListItemText primary="Edit" />
                         </ListItemButton>

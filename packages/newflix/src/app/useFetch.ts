@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSnackbar } from 'notistack';
 
 type UseFetchReturnValue = [response: any, error: { message: string }];
 
