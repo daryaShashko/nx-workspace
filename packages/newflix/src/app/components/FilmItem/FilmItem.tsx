@@ -21,19 +21,20 @@ export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onC
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
         setAnchorEl(event.currentTarget);
     };
 
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const handleEditClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const handleEditClick = (event: React.SyntheticEvent<EventTarget>) => {
         event.stopPropagation();
         handleClose();
         onEdit();
     };
 
-    const handleDeleteClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const handleDeleteClick = (event: React.SyntheticEvent<EventTarget>) => {
         event.stopPropagation();
         handleClose();
         onDelete();
