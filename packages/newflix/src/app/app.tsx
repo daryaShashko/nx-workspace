@@ -8,7 +8,7 @@ import Container from '@mui/material/Container';
 import { ADD_FILM_URL, FILMS_URL, SEARCH_FILMS_BY_TITLE_URL } from './requests';
 import { useSnackbar } from 'notistack';
 
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useHistory, useLocation, Redirect } from 'react-router-dom';
 import { useState } from 'react';
 import { FormData } from './components/AddOrEditFilmForm/types';
 import { requestJSON } from './useFetch';
@@ -24,6 +24,12 @@ const Header = styled.header`
     }
 `;
 
+function useQuery() {
+    const { search } = useLocation();
+
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+}
+
 export const App = React.memo(() => {
     const editDialogRef = React.useRef<DialogImperativeHandlersProps>(null);
     const [searchBarValue, setSearchBarValue] = useState('');
@@ -34,10 +40,25 @@ export const App = React.memo(() => {
     const [pageCount, setPageCount] = React.useState(0);
     const onChangePage = React.useCallback(async (page: number) => setCurrPage(page), []);
     const { enqueueSnackbar } = useSnackbar();
+    const history = useHistory();
+    const location = useLocation();
+    const query = useQuery();
     const onChangePageForSearchResults = React.useCallback(
         async (page: number) => setCurrPageForSearchResults(page),
         []
     );
+
+    React.useEffect(() => {
+        (async () => {
+            if (location.pathname === '/search' && !query.get('title')) {
+                const resp = await requestJSON(`${FILMS_URL}?page=${currPage}`);
+                setSearchBarValue('');
+                setFilms(resp.movies);
+                setPageCount(resp.pageCount);
+            }
+        })();
+        return () => setSearchBarValue('');
+    }, [query.get('title'), location.pathname]);
 
     React.useEffect(() => {
         (async () => {
@@ -78,6 +99,7 @@ export const App = React.memo(() => {
                 method: 'POST',
                 body: JSON.stringify(data)
             });
+            history.replace(`/`);
             enqueueSnackbar('Film is saved', { variant: 'success' });
         } catch (err) {
             enqueueSnackbar('Some error', { variant: 'error' });
@@ -89,6 +111,7 @@ export const App = React.memo(() => {
     };
 
     const handleOnSearch = async () => {
+        history.push(`/search?title=${searchBarValue}`);
         const x = await requestJSON(`${SEARCH_FILMS_BY_TITLE_URL}${searchBarValue}&page=${currPageForSearchResults}`);
         setFilms(x.movies);
         setPageCountForSearchResults(x.pageCount);
@@ -97,9 +120,9 @@ export const App = React.memo(() => {
     return (
         <Container>
             <Switch>
+                <Redirect exact from="/" to="/search" />
                 <Route
-                    path="/"
-                    exact
+                    path="/search"
                     render={() => (
                         <Header>
                             <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
@@ -123,7 +146,6 @@ export const App = React.memo(() => {
                 />
                 <Route
                     path="/films/:id"
-                    exact
                     render={({
                         match: {
                             params: { id }
