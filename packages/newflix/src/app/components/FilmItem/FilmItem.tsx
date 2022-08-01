@@ -16,18 +16,28 @@ import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { grey } from '@mui/material/colors';
-import { Dialog } from '../Dialog';
-import { DialogImperativeHandlersProps } from '../Dialog/Dialog';
 
 export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onClick, onEdit, onDelete }) => {
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
         setAnchorEl(event.currentTarget);
     };
 
     const handleClose = () => {
         setAnchorEl(null);
+    };
+    const handleEditClick = (event: React.SyntheticEvent<EventTarget>) => {
+        event.stopPropagation();
+        handleClose();
+        onEdit();
+    };
+
+    const handleDeleteClick = (event: React.SyntheticEvent<EventTarget>) => {
+        event.stopPropagation();
+        handleClose();
+        onDelete();
     };
 
     const open = Boolean(anchorEl);
@@ -57,7 +67,7 @@ export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onC
                 }}>
                 <List sx={{ width: 200, maxWidth: 360, bgcolor: grey[50] }} aria-label="film-dialog">
                     <ListItem disablePadding>
-                        <ListItemButton onClick={onDelete}>
+                        <ListItemButton onClick={handleDeleteClick}>
                             <ListItemIcon>
                                 <DeleteIcon />
                             </ListItemIcon>
@@ -65,9 +75,9 @@ export const FilmItem: React.FC<FilmItemProps> = ({ img, title, genre, date, onC
                         </ListItemButton>
                     </ListItem>
                     <ListItem disablePadding>
-                        <ListItemButton>
+                        <ListItemButton onClick={handleEditClick}>
                             <ListItemIcon>
-                                <EditIcon onClick={onEdit} />
+                                <EditIcon />
                             </ListItemIcon>
                             <ListItemText primary="Edit" />
                         </ListItemButton>

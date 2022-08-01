@@ -1,13 +1,14 @@
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { Button, SearchBar, Logo, Films, FilmDescription, AddOrEditFilmForm, Pagination } from './components';
+import { Button, SearchBar, Logo, Films, AddOrEditFilmForm, Pagination } from './components';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import { ADD_FILM_URL, FILMS_URL, SEARCH_FILMS_BY_TITLE_URL } from './requests';
+import { useSnackbar } from 'notistack';
 
-import { Route, useHistory, Switch } from 'react-router-dom';
+import { Route, Switch, useHistory, useLocation, Redirect } from 'react-router-dom';
 import { useState } from 'react';
 import { FormData } from './components/AddOrEditFilmForm/types';
 import { requestJSON } from './useFetch';
@@ -23,6 +24,12 @@ const Header = styled.header`
     }
 `;
 
+function useQuery() {
+    const { search } = useLocation();
+
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+}
+
 export const App = React.memo(() => {
     const editDialogRef = React.useRef<DialogImperativeHandlersProps>(null);
     const [searchBarValue, setSearchBarValue] = useState('');
@@ -32,10 +39,26 @@ export const App = React.memo(() => {
     const [pageCountForSearchResults, setPageCountForSearchResults] = React.useState(0);
     const [pageCount, setPageCount] = React.useState(0);
     const onChangePage = React.useCallback(async (page: number) => setCurrPage(page), []);
+    const { enqueueSnackbar } = useSnackbar();
+    const history = useHistory();
+    const location = useLocation();
+    const query = useQuery();
     const onChangePageForSearchResults = React.useCallback(
         async (page: number) => setCurrPageForSearchResults(page),
         []
     );
+
+    React.useEffect(() => {
+        (async () => {
+            if (location.pathname === '/search' && !query.get('title')) {
+                const resp = await requestJSON(`${FILMS_URL}?page=${currPage}`);
+                setSearchBarValue('');
+                setFilms(resp.movies);
+                setPageCount(resp.pageCount);
+            }
+        })();
+        return () => setSearchBarValue('');
+    }, [query.get('title'), location.pathname]);
 
     React.useEffect(() => {
         (async () => {
@@ -56,7 +79,11 @@ export const App = React.memo(() => {
     }, [currPageForSearchResults]);
 
     const openEditDialog = () => {
-        editDialogRef.current?.toggleDialog();
+        editDialogRef.current?.openDialog();
+    };
+
+    const closeEditDialog = () => {
+        editDialogRef.current?.closeDialog();
     };
 
     const handleOnChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
@@ -67,17 +94,24 @@ export const App = React.memo(() => {
     };
 
     const onSaveFilm = async (data: Partial<FormData>) => {
-        await requestJSON(ADD_FILM_URL, {
-            method: 'POST',
-            body: JSON.stringify(data)
-        });
+        try {
+            await requestJSON(ADD_FILM_URL, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            history.replace(`/`);
+            enqueueSnackbar('Film is saved', { variant: 'success' });
+        } catch (err) {
+            enqueueSnackbar('Some error', { variant: 'error' });
+        }
     };
 
     const onCancel = (data: Partial<FormData>) => {
-        console.log(data);
+        closeEditDialog();
     };
 
     const handleOnSearch = async () => {
+        history.push(`/search?title=${searchBarValue}`);
         const x = await requestJSON(`${SEARCH_FILMS_BY_TITLE_URL}${searchBarValue}&page=${currPageForSearchResults}`);
         setFilms(x.movies);
         setPageCountForSearchResults(x.pageCount);
@@ -86,9 +120,9 @@ export const App = React.memo(() => {
     return (
         <Container>
             <Switch>
+                <Redirect exact from="/" to="/search" />
                 <Route
-                    path="/"
-                    exact
+                    path="/search"
                     render={() => (
                         <Header>
                             <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
