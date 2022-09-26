@@ -52,8 +52,9 @@ export const App = React.memo(() => {
         (async () => {
             if (location.pathname === '/search' && !query.get('title')) {
                 const resp = await requestJSON(`${FILMS_URL}?page=${currPage}`);
+                console.log(resp);
                 setSearchBarValue('');
-                setFilms(resp.movies);
+                setFilms(resp);
                 setPageCount(resp.pageCount);
             }
         })();

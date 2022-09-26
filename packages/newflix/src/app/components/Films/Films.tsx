@@ -28,7 +28,6 @@ export const Films: React.FC<{ films: FilmResponse[] }> = ({ films }) => {
     const history = useHistory();
     const deleteDialogRef = React.useRef<DialogImperativeHandlersProps>(null);
     const editDialogRef = React.useRef<DialogImperativeHandlersProps>(null);
-
     const openDeleteDialog = () => {
         deleteDialogRef.current?.openDialog();
     };

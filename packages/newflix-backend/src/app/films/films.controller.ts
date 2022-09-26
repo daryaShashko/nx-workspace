@@ -1,10 +1,9 @@
 import { Controller, Get, Param, Query, Post, Put, Delete, Body } from '@nestjs/common';
-import { AppService } from '../app.service';
 import { FilmsService } from './films.service';
 
 @Controller('films')
 export class FilmsController {
-    constructor(private readonly appService: AppService, private readonly filmsService: FilmsService) {}
+    constructor(private readonly filmsService: FilmsService) {}
 
     @Get()
     async getFilms(@Query() query) {
@@ -26,7 +25,6 @@ export class FilmsController {
 
     @Post('/addFilm')
     async addNewFilm(@Body() body) {
-        console.log(body);
         const x = await this.filmsService.addFilm(body);
         return x;
     }
