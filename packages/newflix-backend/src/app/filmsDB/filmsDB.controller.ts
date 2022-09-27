@@ -10,17 +10,15 @@ export class FilmsDBController {
     constructor(private readonly FilmsDBService: FilmsDBService) {}
 
     @Get()
-    async getFilms(@Query() query: string): Promise<CreateFilmDto[]> {
+    async getFilms(@Query() query: { page: string }): Promise<{ movies: CreateFilmDto[] }> {
         const films = await this.FilmsDBService.getFilms();
-        const x = films.map((el) => new CreateFilmDto(el));
-        return x;
+        return { movies: films.map((el) => new CreateFilmDto(el)) };
     }
 
     @Get('/searchBy')
-    async getByQuery(@Query() query: string) {
-        console.log('----query', query);
-        // const x = await this.filmsService.findByQuery(query.title, query.page);
-        // return x;
+    async getByQuery(@Query() query: { title: string; page: string }) {
+        const films = await this.FilmsDBService.getFilms({ title: { $regex: query.title, $options: 'i' } });
+        return { movies: films.map((el) => new CreateFilmDto(el)) };
     }
 
     @Get('/:id')

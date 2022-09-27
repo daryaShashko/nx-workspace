@@ -3,17 +3,22 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { CreateFilmDB, FilmDB } from './filmsDB.schema';
 import { FilmsDBRepository } from './filmsDB.repository';
+import {FilterQuery} from "mongoose";
 
 @Injectable()
 export class FilmsDBService {
     constructor(private readonly filmsDBRepository: FilmsDBRepository) {}
 
-    getFilmById(id: string): Promise<FilmDB> {
+    async getFilmById(id: string): Promise<FilmDB> {
         return this.filmsDBRepository.finById(id);
     }
 
-    async getFilms(): Promise<FilmDB[]> {
-        return this.filmsDBRepository.find();
+    async findByQuery(id: string): Promise<FilmDB> {
+        return this.filmsDBRepository.finById(id);
+    }
+
+    async getFilms(filmsDBFilterQuery?: FilterQuery<FilmDB>): Promise<FilmDB[]> {
+        return this.filmsDBRepository.find(filmsDBFilterQuery);
     }
 
     async createFilm(film: CreateFilmDB): Promise<FilmDB> {

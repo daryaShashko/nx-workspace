@@ -54,8 +54,9 @@ export const App = React.memo(() => {
                 const resp = await requestJSON(`${FILMS_URL}?page=${currPage}`);
                 console.log(resp);
                 setSearchBarValue('');
-                setFilms(resp);
-                setPageCount(resp.pageCount);
+                setFilms(resp.movies);
+                setPageCount(1);
+                // setPageCount(resp.pageCount);
             }
         })();
         return () => setSearchBarValue('');
@@ -65,7 +66,8 @@ export const App = React.memo(() => {
         (async () => {
             const resp = await requestJSON(`${FILMS_URL}?page=${currPage}`);
             setFilms(resp.movies);
-            setPageCount(resp.pageCount);
+            setPageCount(1);
+            // setPageCount(resp.pageCount);
         })();
     }, [currPage]);
 
@@ -75,7 +77,8 @@ export const App = React.memo(() => {
                 `${SEARCH_FILMS_BY_TITLE_URL}${searchBarValue}&page=${currPageForSearchResults}`
             );
             setFilms(resp.movies);
-            setPageCount(resp.pageCount);
+            setPageCount(1);
+            // setPageCount(resp.pageCount);
         })();
     }, [currPageForSearchResults]);
 
@@ -114,8 +117,10 @@ export const App = React.memo(() => {
     const handleOnSearch = async () => {
         history.push(`/search?title=${searchBarValue}`);
         const x = await requestJSON(`${SEARCH_FILMS_BY_TITLE_URL}${searchBarValue}&page=${currPageForSearchResults}`);
+
         setFilms(x.movies);
-        setPageCountForSearchResults(x.pageCount);
+        setPageCountForSearchResults(1);
+        // setPageCountForSearchResults(x.pageCount);
     };
 
     return (

@@ -16,9 +16,8 @@ export class FilmsDBRepository {
         return this.FilmDbModel.findOne(filmsDBFilterQuery);
     }
 
-    async find(): Promise<FilmDB[]> {
-        const x = await this.FilmDbModel.find().exec();
-        return x;
+    async find(filmsDBFilterQuery?: FilterQuery<FilmDB>): Promise<FilmDB[]> {
+        return this.FilmDbModel.find(filmsDBFilterQuery).exec();
     }
 
     async create(film: FilmDB): Promise<FilmDB> {
