@@ -11,6 +11,7 @@ export class CreateFilmDto {
     overview: string;
 
     constructor(film?: FilmDB) {
+        this.id = String(film.id);
         this.release_date = film.release_date;
         this.title = film.title;
         this.genres = film.genres;

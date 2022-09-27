@@ -8,8 +8,8 @@ import { FilmsDBRepository } from './filmsDB.repository';
 export class FilmsDBService {
     constructor(private readonly filmsDBRepository: FilmsDBRepository) {}
 
-    async getFilmById(id: string): Promise<FilmDB> {
-        return this.filmsDBRepository.findOne({ id });
+    getFilmById(id: string): Promise<FilmDB> {
+        return this.filmsDBRepository.finById(id);
     }
 
     async getFilms(): Promise<FilmDB[]> {

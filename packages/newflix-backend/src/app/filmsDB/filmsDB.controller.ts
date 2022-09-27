@@ -25,9 +25,9 @@ export class FilmsDBController {
 
     @Get('/:id')
     async getById(@Param() { id }) {
-        return this.FilmsDBService.getFilmById(id);
-        // const x = await this.filmsService.getById(id);
-        // return x;
+        const film = await this.FilmsDBService.getFilmById(id);
+
+        return new CreateFilmDto(film);
     }
 
     @Post('/addFilm')

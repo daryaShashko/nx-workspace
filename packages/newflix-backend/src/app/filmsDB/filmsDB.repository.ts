@@ -8,6 +8,10 @@ import { FilmDB, FilmDBDocument } from './filmsDB.schema';
 export class FilmsDBRepository {
     constructor(@InjectModel(FilmDB.name) private FilmDbModel: Model<FilmDBDocument>) {}
 
+    async finById(id: string): Promise<FilmDB> {
+        return this.FilmDbModel.findOne({ id: +id });
+    }
+
     async findOne(filmsDBFilterQuery: FilterQuery<FilmDB>): Promise<FilmDB> {
         return this.FilmDbModel.findOne(filmsDBFilterQuery);
     }

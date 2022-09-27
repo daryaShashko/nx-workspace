@@ -33,7 +33,7 @@ export class CreateFilmDB {
 }
 
 @Schema()
-@ApiTags('filmDB')
+@ApiTags('FilmDB')
 export class FilmDB {
     @Prop()
     @ApiProperty()
@@ -41,7 +41,7 @@ export class FilmDB {
 
     @Prop()
     @ApiProperty()
-    id: string;
+    id: number;
 
     // @Prop()
     // tagline: string;
