@@ -6,14 +6,14 @@ import { FilmsDBRepository } from './filmsDB.repository';
 
 @Injectable()
 export class FilmsDBService {
-    constructor(private readonly filmsBBRepository: FilmsDBRepository) {}
+    constructor(private readonly filmsDBRepository: FilmsDBRepository) {}
 
     async getFilmById(id: string): Promise<FilmDB> {
-        return this.filmsBBRepository.findOne({ id });
+        return this.filmsDBRepository.findOne({ id });
     }
 
     async getFilms(): Promise<FilmDB[]> {
-        return this.filmsBBRepository.find();
+        return this.filmsDBRepository.find();
     }
 
     async createFilm(film: CreateFilmDB): Promise<FilmDB> {
@@ -27,7 +27,7 @@ export class FilmsDBService {
             vote_average: 0,
             overview: film.description
         };
-        return this.filmsBBRepository.create(filmForFile);
+        return this.filmsDBRepository.create(filmForFile);
     }
 
     async updateFilm(id: string, filmUpdates: CreateFilmDB): Promise<FilmDB> {
@@ -39,6 +39,6 @@ export class FilmsDBService {
             overview: filmUpdates.description
         };
 
-        return this.filmsBBRepository.findOneAndUpdate({ id }, newDataForTargetFilm);
+        return this.filmsDBRepository.findOneAndUpdate({ id }, newDataForTargetFilm);
     }
 }
