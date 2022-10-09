@@ -10,9 +10,9 @@ import { FilmDTO } from './dto/create-film.dto';
 export class FilmsDBService {
     constructor(private readonly filmsDBRepository: FilmsDBRepository) {}
 
-    // async getFilmById(id: string): Promise<FilmDB> {
-    //     return this.filmsDBRepository.finById(id);
-    // }
+    async getFilmById({ id }: { id: string }): Promise<FilmDTO> {
+        return this.filmsDBRepository.findOne(id);
+    }
     //
     // async findByQuery(id: string): Promise<FilmDB> {
     //     return this.filmsDBRepository.finById(id);

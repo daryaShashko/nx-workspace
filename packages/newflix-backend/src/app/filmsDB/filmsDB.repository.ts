@@ -10,9 +10,15 @@ import { FilmDTO } from './dto';
 export class FilmsDBRepository {
     constructor(@InjectModel(FilmDB.name) private FilmDbModel: Model<FilmDBDocument>) {}
 
-    // async finById(id: string): Promise<FilmDB> {
-    //     return this.FilmDbModel.findOne({ id: +id });
-    // }
+    async findOne(id: string): Promise<FilmDTO>{
+        const adjustedQuery: FilterQuery<FilmDB> = new Query();
+        if (id) {
+            adjustedQuery.setQuery({ id: +id });
+        }
+        const film = await this.FilmDbModel.findOne(adjustedQuery);
+        return FilmsDBMapper.toDomain(film);
+    }
+
     //
     // async findOne(filmsDBFilterQuery: FilterQuery<FilmDB>): Promise<FilmDB> {
     //     //{ title: { $regex: query.title, $options: 'i' }

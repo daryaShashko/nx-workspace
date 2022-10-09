@@ -21,12 +21,11 @@ export class FilmsDBController {
         return this.FilmsDBService.getFilms(query);
     }
 
-    // @Get('/:id')
-    // async getById(@Param() { id }) {
-    //     const film = await this.FilmsDBService.getFilmById(id);
-    //
-    //     return new CreateFilmDto(film);
-    // }
+    @Get('/:id')
+    async getById(@Param() params: { id: string }): Promise<FilmDTO> {
+        return await this.FilmsDBService.getFilmById(params);
+    }
+
     //
     // @Post('/addFilm')
     // async addNewFilm(@Body() body: CreateFilmDB): Promise<FilmDTO> {
