@@ -1,6 +1,6 @@
 import { FilmDB } from '../filmsDB.schema';
 
-export class CreateFilmDto {
+export class FilmDTO {
     id: string;
     poster_path: string;
     genres: string[];
