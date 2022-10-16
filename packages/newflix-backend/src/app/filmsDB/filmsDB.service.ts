@@ -26,16 +26,8 @@ export class FilmsDBService {
     async createFilm(film: UpdateFilmDto): Promise<FilmDTO> {
         return this.filmsDBRepository.create(film);
     }
-    //
-    // async updateFilm(id: string, filmUpdates: CreateFilmDB): Promise<FilmDB> {
-    //     const newDataForTargetFilm = {
-    //         genres: filmUpdates.genre,
-    //         release_date: filmUpdates.releaseDate,
-    //         title: filmUpdates.title,
-    //         runtime: Number(filmUpdates.duration),
-    //         overview: filmUpdates.description
-    //     }; //should be in repository
-    //
-    //     return this.filmsDBRepository.findOneAndUpdate({ id }, newDataForTargetFilm);
-    // }
+
+    async updateFilm({ id }: { id: string }, film: UpdateFilmDto): Promise<FilmDTO> {
+        return this.filmsDBRepository.findOneAndUpdate(id, film);
+    }
 }

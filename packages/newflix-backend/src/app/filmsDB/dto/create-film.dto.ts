@@ -10,7 +10,7 @@ export class FilmDTO {
     vote_average: number;
     overview: string;
 
-    constructor(film?: FilmDB) {
+    constructor(film?: any) {
         this.id = String(film.id);
         this.release_date = film.release_date;
         this.title = film.title;

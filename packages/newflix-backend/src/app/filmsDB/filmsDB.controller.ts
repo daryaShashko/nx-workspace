@@ -1,8 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 
-import { CreateFilmDB } from './filmsDB.schema';
 import { FilmsDBService } from './filmsDB.service';
-import { ApiParam } from '@nestjs/swagger';
 import {FilmDTO, UpdateFilmDto} from './dto';
 
 // use JOI (validation)
@@ -26,17 +24,16 @@ export class FilmsDBController {
         return await this.FilmsDBService.getFilmById(params);
     }
 
-
     @Post('/addFilm')
     async addNewFilm(@Body() film: UpdateFilmDto): Promise<FilmDTO> {
         return await this.FilmsDBService.createFilm(film);
     }
-    //
-    // @Patch('/:id')
-    // async changeFilm(@Param('userId') id: string, @Body() filmDto: CreateFilmDB): Promise<FilmDB> {
-    //     return this.FilmsDBService.updateFilm(id, filmDto);
-    // }
-    //
+
+    @Patch('/:id')
+    async changeFilm(@Param() params: { id: string }, @Body() film: UpdateFilmDto): Promise<FilmDTO> {
+        return await this.FilmsDBService.updateFilm(params, film);
+    }
+
     // @Delete('/:id')
     // @ApiParam({ name: 'id' })
     // async deleteFilmById(@Param('id') id: string) {

@@ -57,7 +57,7 @@ export const Films: React.FC<{ films: FilmResponse[] }> = ({ films }) => {
 
     const onEditFilm = async (data: Partial<FormData>, id: string) => {
         try {
-            await requestJSON(`${EDIT_FILM_URL}/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+            await requestJSON(`${EDIT_FILM_URL}/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
             editDialogRef.current?.closeDialog();
             enqueueSnackbar('Film is changed', { variant: 'success' });
         } catch (err) {

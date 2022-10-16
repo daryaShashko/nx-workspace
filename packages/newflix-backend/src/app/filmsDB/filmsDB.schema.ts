@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 
 export type FilmDBDocument = FilmDB & Document;
 
-@Schema()
+@Schema({ id: false })
 @ApiTags('create-filmDB')
 export class CreateFilmDB {
     @Prop()
@@ -32,21 +32,25 @@ export class CreateFilmDB {
     duration: string;
 }
 
-@Schema()
+@Schema({ id: false })
 @ApiTags('FilmDB')
 export class FilmDB {
     @Prop()
     @ApiProperty()
     title: string;
 
-    @Prop()
-    @ApiProperty()
+    @Prop({
+        type: Number,
+        default: function genUUID() {
+            return +Date.now();
+        }
+    })
     id: number;
 
     // @Prop()
     // tagline: string;
 
-    @Prop()
+    @Prop({type: Number, default: 0})
     @ApiProperty()
     vote_average: number;
 
@@ -57,7 +61,7 @@ export class FilmDB {
     @ApiProperty()
     release_date: string;
 
-    @Prop()
+    @Prop({type: String, default: 'https://culturaldetective.files.wordpress.com/2012/04/movies-film.jpg' })
     @ApiProperty()
     poster_path: string;
 
