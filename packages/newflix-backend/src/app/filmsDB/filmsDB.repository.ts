@@ -4,7 +4,7 @@ import { FilterQuery, Model, Query } from 'mongoose';
 
 import { FilmDB, FilmDBDocument } from './filmsDB.schema';
 import { FilmsDBMapper } from './filmsDB.mapper';
-import { FilmDTO } from './dto';
+import { FilmDTO, UpdateFilmDto } from './dto';
 
 @Injectable()
 export class FilmsDBRepository {
@@ -34,15 +34,15 @@ export class FilmsDBRepository {
         return films.map(FilmsDBMapper.toDomain);
     }
 
-    // async create(film: CreateFilmDB): Promise<FilmDTO> {
-    //     const persistenceFilm = FilmsDBMapper.toPersistence(film);
-    //     try {
-    //         const newFilm = new this.FilmDbModel(persistenceFilm);
-    //         return FilmsDBMapper.toDomain(newFilm);
-    //     } catch (err) {
-    //         throw Error(err);
-    //     }
-    // }
+    async create(film: UpdateFilmDto): Promise<FilmDTO> {
+        const persistenceFilm = FilmsDBMapper.toPersistence(film);
+        try {
+            const newFilm = new this.FilmDbModel(persistenceFilm);
+            return FilmsDBMapper.toDomain(newFilm);
+        } catch (err) {
+            throw Error(err);
+        }
+    }
     //
     // async findOneAndUpdate(filmsDBFilterQuery: FilterQuery<FilmDB>, film: Partial<FilmDB>): Promise<FilmDB> {
     //     return this.FilmDbModel.findOneAndUpdate(filmsDBFilterQuery, film, { new: true });

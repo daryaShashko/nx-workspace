@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { CreateFilmDB, FilmDB } from './filmsDB.schema';
 import { FilmsDBRepository } from './filmsDB.repository';
 import { FilterQuery } from 'mongoose';
-import { FilmDTO } from './dto/create-film.dto';
+import { FilmDTO, UpdateFilmDto } from './dto';
 
 @Injectable()
 export class FilmsDBService {
@@ -22,10 +22,10 @@ export class FilmsDBService {
         const films = await this.filmsDBRepository.find(query);
         return { movies: films };
     }
-    //
-    // async createFilm(film: CreateFilmDB): Promise<FilmDTO> {
-    //     return this.filmsDBRepository.create(film);
-    // }
+
+    async createFilm(film: UpdateFilmDto): Promise<FilmDTO> {
+        return this.filmsDBRepository.create(film);
+    }
     //
     // async updateFilm(id: string, filmUpdates: CreateFilmDB): Promise<FilmDB> {
     //     const newDataForTargetFilm = {

@@ -1,6 +1,7 @@
 import { CreateFilmDB, FilmDB } from './filmsDB.schema';
 import { v4 as uuidv4 } from 'uuid';
 import { FilmDTO } from './dto/create-film.dto';
+import {UpdateFilmDto} from "./dto";
 
 //
 // export abstract class Mapper<DomainEntityOrValueObject> {
@@ -26,7 +27,7 @@ export class FilmsDBMapper {
         return domainFilm;
     }
 
-    public static toPersistence(film: CreateFilmDB): any {
+    public static toPersistence(film: UpdateFilmDto): any {
         const filmForDB: FilmDB = {
             //review with clean architectory perspective and use domaines
             id: uuidv4(),
