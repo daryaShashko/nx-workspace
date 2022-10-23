@@ -34,11 +34,8 @@ export class FilmsDBController {
         return await this.FilmsDBService.updateFilm(params, film);
     }
 
-    // @Delete('/:id')
-    // @ApiParam({ name: 'id' })
-    // async deleteFilmById(@Param('id') id: string) {
-    //     console.log('-----delete', id);
-    //     // const x = await this.filmsService.delete(id);
-    //     // return x;
-    // }
+    @Delete('/:id')
+    async deleteFilm(@Param() params: { id: string }): Promise<FilmDTO> {
+        return await this.FilmsDBService.deleteFilm(params);
+    }
 }

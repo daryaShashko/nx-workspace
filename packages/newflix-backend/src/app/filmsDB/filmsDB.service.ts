@@ -30,4 +30,8 @@ export class FilmsDBService {
     async updateFilm({ id }: { id: string }, film: UpdateFilmDto): Promise<FilmDTO> {
         return this.filmsDBRepository.findOneAndUpdate(id, film);
     }
+
+    async deleteFilm({ id }: { id: string }): Promise<FilmDTO> {
+        return this.filmsDBRepository.findOneAndDelete(id);
+    }
 }

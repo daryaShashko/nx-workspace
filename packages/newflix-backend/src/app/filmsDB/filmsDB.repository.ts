@@ -52,4 +52,15 @@ export class FilmsDBRepository {
         );
         return FilmsDBMapper.toView(updatedFilm);
     }
+
+    async findOneAndDelete(id: string): Promise<FilmDTO> {
+        const adjustedQuery: FilterQuery<FilmDB> = new Query();
+        if (id) {
+            adjustedQuery.setQuery({ id: +id });
+        }
+        const updatedFilm = await this.FilmDbModel.findOneAndDelete(
+            adjustedQuery
+        );
+        return FilmsDBMapper.toView(updatedFilm);
+    }
 }
