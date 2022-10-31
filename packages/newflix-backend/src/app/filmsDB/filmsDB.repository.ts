@@ -10,6 +10,10 @@ import { FilmDTO, UpdateFilmDto } from './dto';
 export class FilmsDBRepository {
     constructor(@InjectModel(FilmDB.name) private FilmDbModel: Model<FilmDBDocument>) {}
 
+    async getCount(): Promise<number> {
+        return this.FilmDbModel.countDocuments();
+    }
+
     async findOne(id: string): Promise<FilmDTO> {
         const adjustedQuery: FilterQuery<FilmDB> = new Query();
         if (id) {
@@ -19,12 +23,15 @@ export class FilmsDBRepository {
         return FilmsDBMapper.toView(film);
     }
 
-    async find(filmsDBFilterQuery?: { page?: string; title?: string }): Promise<FilmDTO[]> {
+    async find(title: string, page: number, perPageItems: number): Promise<FilmDTO[]> {
         const adjustedQuery: FilterQuery<FilmDB> = new Query();
-        if (filmsDBFilterQuery.title) {
-            adjustedQuery.setQuery({ title: { $regex: filmsDBFilterQuery.title, $options: 'i' } });
+        if (title) {
+            adjustedQuery.setQuery({ title: { $regex: title, $options: 'i' } });
         }
-        const films = await this.FilmDbModel.find(adjustedQuery).exec();
+        const films = await this.FilmDbModel.find(adjustedQuery)
+            .skip((page - 1) * perPageItems)
+            .limit(perPageItems)
+            .exec();
         return films.map(FilmsDBMapper.toView);
     }
 
@@ -58,9 +65,7 @@ export class FilmsDBRepository {
         if (id) {
             adjustedQuery.setQuery({ id: +id });
         }
-        const updatedFilm = await this.FilmDbModel.findOneAndDelete(
-            adjustedQuery
-        );
+        const updatedFilm = await this.FilmDbModel.findOneAndDelete(adjustedQuery);
         return FilmsDBMapper.toView(updatedFilm);
     }
 }

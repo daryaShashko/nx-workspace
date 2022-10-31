@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-
-import { CreateFilmDB, FilmDB } from './filmsDB.schema';
 import { FilmsDBRepository } from './filmsDB.repository';
-import { FilterQuery } from 'mongoose';
-import { FilmDTO, UpdateFilmDto } from './dto';
+import { FilmDTO, PaginatedResults, UpdateFilmDto } from './dto';
+import { paginate } from './filmsDB.utils';
+import { DEFAULT_ITEMS_PER_PAGE } from './filmdDB.const';
 
 @Injectable()
 export class FilmsDBService {
@@ -13,14 +11,20 @@ export class FilmsDBService {
     async getFilmById({ id }: { id: string }): Promise<FilmDTO> {
         return this.filmsDBRepository.findOne(id);
     }
-    //
-    // async findByQuery(id: string): Promise<FilmDB> {
-    //     return this.filmsDBRepository.finById(id);
-    // }
 
-    async getFilms(query?: { title?: string; page?: string }): Promise<{ movies: FilmDTO[] }> {
-        const films = await this.filmsDBRepository.find(query);
-        return { movies: films };
+    async getFilms({
+        title = '',
+        page = 1,
+        perPageItems = DEFAULT_ITEMS_PER_PAGE
+    }: {
+        title?: string;
+        page?: number;
+        perPageItems?: number;
+    }): Promise<PaginatedResults<FilmDTO>> {
+        const filmsCount = await this.filmsDBRepository.getCount();
+        const films = await this.filmsDBRepository.find(title, page, perPageItems);
+
+        return paginate<FilmDTO>(films, filmsCount, page, perPageItems);
     }
 
     async createFilm(film: UpdateFilmDto): Promise<FilmDTO> {

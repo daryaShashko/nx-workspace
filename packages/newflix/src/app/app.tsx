@@ -54,9 +54,9 @@ export const App = React.memo(() => {
                 const resp = await requestJSON(`${FILMS_URL}?page=${currPage}`);
                 console.log(resp);
                 setSearchBarValue('');
-                setFilms(resp.movies);
+                setFilms(resp.data);
                 setPageCount(1);
-                // setPageCount(resp.pageCount);
+                setPageCount(resp.pageCount);
             }
         })();
         return () => setSearchBarValue('');
@@ -65,9 +65,9 @@ export const App = React.memo(() => {
     React.useEffect(() => {
         (async () => {
             const resp = await requestJSON(`${FILMS_URL}?page=${currPage}`);
-            setFilms(resp.movies);
+            setFilms(resp.data);
             setPageCount(1);
-            // setPageCount(resp.pageCount);
+            setPageCount(resp.pageCount);
         })();
     }, [currPage]);
 
@@ -76,9 +76,9 @@ export const App = React.memo(() => {
             const resp = await requestJSON(
                 `${SEARCH_FILMS_BY_TITLE_URL}${searchBarValue}&page=${currPageForSearchResults}`
             );
-            setFilms(resp.movies);
+            setFilms(resp.data);
             setPageCount(1);
-            // setPageCount(resp.pageCount);
+            setPageCount(resp.pageCount);
         })();
     }, [currPageForSearchResults]);
 
@@ -118,9 +118,9 @@ export const App = React.memo(() => {
         history.push(`/search?title=${searchBarValue}`);
         const x = await requestJSON(`${SEARCH_FILMS_BY_TITLE_URL}${searchBarValue}&page=${currPageForSearchResults}`);
 
-        setFilms(x.movies);
+        setFilms(x.data);
         setPageCountForSearchResults(1);
-        // setPageCountForSearchResults(x.pageCount);
+        setPageCountForSearchResults(x.pageCount);
     };
 
     return (
