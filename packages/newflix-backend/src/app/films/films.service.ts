@@ -1,178 +1,41 @@
+import { FilmsRepository } from './films.repository';
+import { FilmDTO, PaginatedResults, UpdateFilmDto } from '../filmsDB/dto';
+import { DEFAULT_ITEMS_PER_PAGE } from '../filmsDB/filmdDB.const';
+import { paginate } from '../filmsDB/filmsDB.utils';
 import { Injectable } from '@nestjs/common';
-import { resolve } from 'path';
-import { accessSync, writeFileSync } from 'fs';
-import * as fs from 'fs/promises';
-
-export type FilmExtended = {
-    id: string;
-    poster_path: string;
-    genres: string[];
-    release_date: string;
-    title: string;
-    runtime: number;
-    vote_average: number;
-    overview: string;
-};
-
-export type FilmFromBody = {
-    releaseDate: string | null;
-    title: string;
-    genre: string;
-    description: string;
-    duration: string;
-};
 
 @Injectable()
 export class FilmsService {
-    filename = '';
-    constructor() {
-        this.filename = resolve(__dirname, 'src', '../assets/data', 'movies.json');
-        this.getAccessToFile();
+    constructor(private readonly filmsRepository: FilmsRepository) {}
+
+    async getFilmById({ id }: { id: string }): Promise<FilmDTO> {
+        return this.filmsRepository.findOne(id);
     }
 
-    private getAccessToFile(): void {
-        try {
-            accessSync(this.filename);
-        } catch (err) {
-            writeFileSync(this.filename, '[]');
-            console.error(err);
-        }
+    async getFilms({
+        title = '',
+        page = 1,
+        perPageItems = DEFAULT_ITEMS_PER_PAGE
+    }: {
+        title?: string;
+        page?: number;
+        perPageItems?: number;
+    }): Promise<PaginatedResults<FilmDTO>> {
+        const filmsCount = this.filmsRepository.totalFilmsCount;
+        const films = await this.filmsRepository.find(title, page, perPageItems);
+
+        return paginate<FilmDTO>(films, filmsCount, page, perPageItems);
     }
 
-    private async getAllMovies() {
-        let movies;
-        await fs
-            .readFile(this.filename, 'utf8')
-            .then((data) => (movies = JSON.parse(data)))
-            .catch((error) => {
-                throw new Error(error);
-            });
-        return movies || [];
+    async createFilm(film: UpdateFilmDto): Promise<FilmDTO> {
+        return this.filmsRepository.create(film);
     }
 
-    async getAll(page = 1) {
-        const allMovies = await this.getAllMovies();
-        const perPage = 9;
-        const totalPosts = allMovies.length;
-        const totalPages = Math.ceil(totalPosts / perPage);
-        const start = (+page - 1) * perPage;
-        let end = start + perPage;
-        if (end > totalPosts) {
-            end = totalPosts;
-        }
-
-        return {
-            currentPage: page,
-            perPage: perPage,
-            totalCount: totalPosts,
-            pageCount: totalPages,
-            start: start,
-            end: end,
-            movies: allMovies.slice(start, end)
-        };
+    async updateFilm({ id }: { id: string }, film: UpdateFilmDto): Promise<FilmDTO> {
+        return this.filmsRepository.findOneAndUpdate(id, film);
     }
 
-    async findByQuery(query, page) {
-        const allMovies = await this.getAllMovies().then((data) =>
-            data?.filter((item) => new RegExp(query, 'i').test(item.title))
-        );
-        const perPage = 9;
-        const totalPosts = allMovies.length;
-        const totalPages = Math.ceil(totalPosts / perPage);
-        const start = (+page - 1) * perPage;
-        let end = start + perPage;
-        if (end > totalPosts) {
-            end = totalPosts;
-        }
-
-        return {
-            currentPage: page,
-            perPage: perPage,
-            totalCount: totalPosts,
-            pageCount: totalPages,
-            start: start,
-            end: end,
-            movies: allMovies.slice(start, end)
-        };
-    }
-
-    async getById(id) {
-        const movies = await this.getAllMovies();
-        if (movies.length) {
-            return movies.find((item) => +item.id === +id);
-        }
-        return movies;
-    }
-
-    async addFilm(film: FilmFromBody) {
-        const filmForFile = {
-            id: new Date().getTime(),
-            poster_path: 'https://culturaldetective.files.wordpress.com/2012/04/movies-film.jpg',
-            genres: film.genre,
-            release_date: film.releaseDate,
-            title: film.title,
-            runtime: film.duration,
-            vote_average: 0,
-            overview: film.description
-        };
-        await fs
-            .readFile(this.filename, 'utf8')
-            .then(async (data) => {
-                const x = JSON.parse(data).concat(filmForFile);
-                await fs.writeFile(this.filename, JSON.stringify(x));
-            })
-            .catch((error) => {
-                throw new Error(error);
-            });
-        return filmForFile;
-    }
-
-    async changeFilm(id, film) {
-        const newDataForTargetFilm = {
-            genres: film.genre,
-            release_date: film.releaseDate,
-            title: film.title,
-            runtime: film.duration,
-            overview: film.description
-        };
-
-        const targetFilm = await this.getById(id);
-        const mergedFilm = { ...targetFilm, ...newDataForTargetFilm };
-
-        await fs
-            .readFile(this.filename, 'utf8')
-            .then(async (data) => {
-                const films = JSON.parse(data);
-                const newFilms = films.map((film) => {
-                    if (film.id.toString() === id.toString()) {
-                        return mergedFilm;
-                    }
-                    return film;
-                });
-                await fs.writeFile(this.filename, JSON.stringify(newFilms));
-            })
-            .catch((error) => {
-                throw new Error(error);
-            });
-        return mergedFilm;
-    }
-
-    async delete(id) {
-        await fs
-            .readFile(this.filename, 'utf8')
-            .then(async (data) => {
-                const x = JSON.parse(data).filter((item) => {
-                    if (item.id.toString() !== id.toString()) {
-                        return true;
-                    } else {
-                        console.log(item, id);
-                    }
-                });
-                await fs.writeFile(this.filename, JSON.stringify(x));
-            })
-            .catch((error) => {
-                throw new Error(error);
-            });
-        return id;
+    async deleteFilm({ id }: { id: string }): Promise<FilmDTO> {
+        return this.filmsRepository.findOneAndDelete(id);
     }
 }

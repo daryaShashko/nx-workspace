@@ -1,8 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 
 import { FilmsDBService } from './filmsDB.service';
-import { FilmDTO, UpdateFilmDto } from './dto';
-import { PaginationResults } from './filmsDB.service';
+import { FilmDTO, UpdateFilmDto, PaginatedResults } from './dto';
 
 // use JOI (validation)
 
@@ -11,14 +10,12 @@ export class FilmsDBController {
     constructor(private readonly FilmsDBService: FilmsDBService) {}
 
     @Get()
-    async getFilms(@Query() { page }: { page: string }): Promise<PaginationResults<FilmDTO>> {
-        const x = await this.FilmsDBService.getFilms({ page: Number(page) })
-        console.log(x)
+    async getFilms(@Query() { page }: { page: string }): Promise<PaginatedResults<FilmDTO>> {
         return this.FilmsDBService.getFilms({ page: Number(page) });
     }
 
     @Get('/searchBy')
-    async getByQuery(@Query() { title, page }: { title: string; page: string }): Promise<PaginationResults<FilmDTO>> {
+    async getByQuery(@Query() { title, page }: { title: string; page: string }): Promise<PaginatedResults<FilmDTO>> {
         return this.FilmsDBService.getFilms({ title, page: Number(page) });
     }
 

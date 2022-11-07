@@ -47,33 +47,21 @@ export class FilmDB {
     })
     id: number;
 
-    // @Prop()
-    // tagline: string;
-
-    @Prop({type: Number, default: 0})
+    @Prop({ type: Number, default: 0 })
     @ApiProperty()
     vote_average: number;
-
-    // @Prop()
-    // vote_count: number;
 
     @Prop()
     @ApiProperty()
     release_date: string;
 
-    @Prop({type: String, default: 'https://culturaldetective.files.wordpress.com/2012/04/movies-film.jpg' })
+    @Prop({ type: String, default: 'https://culturaldetective.files.wordpress.com/2012/04/movies-film.jpg' })
     @ApiProperty()
     poster_path: string;
 
     @Prop()
     @ApiProperty()
     overview: string;
-
-    // @Prop()
-    // budget: number;
-    //
-    // @Prop()
-    // revenue: number;
 
     @Prop([String])
     @ApiProperty()

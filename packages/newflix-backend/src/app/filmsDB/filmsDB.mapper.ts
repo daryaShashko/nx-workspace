@@ -1,16 +1,14 @@
-import { CreateFilmDB, FilmDB } from './filmsDB.schema';
-import { v4 as uuidv4 } from 'uuid';
-import { FilmDTO } from './dto/create-film.dto';
-import {UpdateFilmDto} from "./dto";
-
-//
-// export abstract class Mapper<DomainEntityOrValueObject> {
-//     // public static toView (raw: any): T;
-//     // public static toDTO (t: T): DTO;
-//     // public static toPersistence (t: T): any;
-// }
+import { FilmDTO } from './dto';
+import { UpdateFilmDto } from './dto';
 
 export class FilmsDBMapper {
+    public static readonly defaultUrl: string = 'https://culturaldetective.files.wordpress.com/2012/04/movies-film.jpg';
+    private static readonly defaultVoteAverage: number = 0;
+
+    public static genUUID(): number {
+        return +Date.now();
+    }
+
     public static toView(film: any): FilmDTO {
         const filmForViewLayer = {
             //review with clean architectory perspective and use domaines
@@ -34,6 +32,16 @@ export class FilmsDBMapper {
             title: film.title,
             runtime: Number(film.duration),
             overview: film.description
+        };
+        return filmForDataLayer;
+    }
+
+    public static toPersistenceInFile(film: UpdateFilmDto): any {
+        const filmForDataLayer = {
+            ...this.toPersistence(film),
+            id: this.genUUID(),
+            url: this.defaultUrl,
+            vote_average: this.defaultVoteAverage
         };
         return filmForDataLayer;
     }
